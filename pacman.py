@@ -83,13 +83,23 @@ class GameState:
         """
         Returns the legal actions for the agent specified.
         """
-#        GameState.explored.add(self)
         if self.isWin() or self.isLose(): return []
 
         if agentIndex == 0:  # Pacman is moving
             return PacmanRules.getLegalActions( self )
         else:
             return GhostRules.getLegalActions( self, agentIndex )
+        
+    def getOriginalLegalActions( self, agentIndex=0 ):
+        """
+        Returns the legal actions for the agent specified.
+        """
+        if self.isWin() or self.isLose(): return []
+
+        if agentIndex == 0:  # Pacman is moving
+            return PacmanRules.getLegalActions( self )
+        else:
+            return GhostRules.getOriginalLegalActions( self, agentIndex )
 
     def generateSuccessor( self, agentIndex, action):
         """
@@ -160,6 +170,12 @@ class GameState:
 
     def getGhostPositions(self):
         return [s.getPosition() for s in self.getGhostStates()]
+    
+    def getGhostStateFromPosition(self, position):
+        for g in self.getGhostStates():
+            if g.getPosition() == position:
+                return g
+        return None
 
     def getNumAgents( self ):
         return len( self.data.agentStates )
@@ -261,7 +277,9 @@ class GameState:
 
 SCARED_TIME = 40    # Moves ghosts are scared
 COLLISION_TOLERANCE = 0.7 # How close ghosts must be to Pacman to kill
-TIME_PENALTY = 1 # Number of points lost each round
+TIME_PENALTY = 0 # Number of points lost each round
+WIN_SCORE = 500
+LOSE_SCORE = -500
 
 class ClassicGameRules:
     """
@@ -277,6 +295,7 @@ class ClassicGameRules:
         initState.initialize( layout, len(ghostAgents) )
         game = Game(agents, display, self, catchExceptions=catchExceptions)
         game.state = initState
+        game.layout = layout
         self.initialState = initState.deepCopy()
         self.quiet = quiet
         return game
@@ -364,10 +383,12 @@ class PacmanRules:
             state.data.food = state.data.food.copy()
             state.data.food[x][y] = False
             state.data._foodEaten = position
-            # TODO: cache numFood?
             numFood = state.getNumFood()
+            # TODO: Aca se podria cambiar la condicion ganadora a numFood = nghosts o algo asi.
+            # NOTE: Condicion ganadora
+            # Es decir, algo que no requiera comer todo y le deje un margen al Pacman.
             if numFood == 0 and not state.data._lose:
-                state.data.scoreChange += 500
+                state.data.scoreChange += WIN_SCORE
                 state.data._win = True
         # Eat capsule
         if( position in state.getCapsules() ):
@@ -383,20 +404,33 @@ class GhostRules:
     These functions dictate how ghosts interact with their environment.
     """
     GHOST_SPEED=1.0
+    
     def getLegalActions( state, ghostIndex ):
         """
         Ghosts cannot stop, and cannot turn around unless they
         reach a dead end, but can turn 90 degrees at intersections.
         """
         conf = state.getGhostState( ghostIndex ).configuration
+        possibleActions = Actions.getPossibleActions( conf, state.data.layout.walls )        
+        return possibleActions
+    getLegalActions = staticmethod( getLegalActions )
+    
+    def getOriginalLegalActions( state, ghostIndex ):
+        """
+        Ghosts cannot stop, and cannot turn around unless they
+        reach a dead end, but can turn 90 degrees at intersections.
+        """
+        conf = state.getGhostState( ghostIndex ).configuration
         possibleActions = Actions.getPossibleActions( conf, state.data.layout.walls )
+        
         reverse = Actions.reverseDirection( conf.direction )
         if Directions.STOP in possibleActions:
             possibleActions.remove( Directions.STOP )
         if reverse in possibleActions and len( possibleActions ) > 1:
             possibleActions.remove( reverse )
+        
         return possibleActions
-    getLegalActions = staticmethod( getLegalActions )
+    getOriginalLegalActions = staticmethod( getOriginalLegalActions )
 
     def applyAction( state, action, ghostIndex):
 
@@ -442,7 +476,7 @@ class GhostRules:
             state.data._eaten[agentIndex] = True
         else:
             if not state.data._win:
-                state.data.scoreChange -= 500
+                state.data.scoreChange += LOSE_SCORE
                 state.data._lose = True
     collide = staticmethod( collide )
 
@@ -523,6 +557,8 @@ def readCommand( argv ):
                       help='Turns on exception handling and timeouts during games', default=False)
     parser.add_option('--timeout', dest='timeout', type='int',
                       help=default('Maximum length of time an agent can spend computing in a single game'), default=30)
+    parser.add_option('--gameMenu', action='store_true', dest='gameMenu',
+                      help='Add the game menu', default=False)
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -552,8 +588,15 @@ def readCommand( argv ):
         options.numIgnore = int(agentOpts['numTrain'])
 
     # Choose a ghost agent
-    ghostType = loadAgent(options.ghost, noKeyboard)
-    args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
+    if options.ghost == "KeyboardGhost":
+        ghostType = loadAgent(options.ghost, noKeyboard)
+        args['keyboardGhosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
+        
+        ghostType = loadAgent("KeyboardTrainingGhost", noKeyboard)
+        args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
+    else:
+        ghostType = loadAgent(options.ghost, noKeyboard)
+        args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
 
     # Choose a display format
     if options.quietGraphics:
@@ -570,6 +613,7 @@ def readCommand( argv ):
     args['record'] = options.record
     args['catchExceptions'] = options.catchExceptions
     args['timeout'] = options.timeout
+    args['gameMenu'] = options.gameMenu
 
     # Special case: recorded games don't use the runGames method or args structure
     if options.gameToReplay != None:
@@ -625,25 +669,157 @@ def replayGame( layout, actions, display ):
 
     display.finish()
 
-def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 ):
+
+def runHistoryGames(layout, pacman, ghosts, display, record, catchExceptions, timeout, keyboardGhosts):
+
+    n_games = 3
+
+    # n juegos sin entrenamiento
+    games, display = runGames(layout, pacman, ghosts, display, n_games, record, 0, catchExceptions, timeout, keyboardGhosts)
+
+    # n juegos con entrenamiento medio
+    pacman.setWeights({'ghost-1-distance': -0.2727409769903002, 'closest-food': -1.3621110078124379, 'bias': -63.15332754401044, 'ghost-2-distance': -0.3484213977577863, '#-of-ghosts-1-step-away': -455.4892921836355, 'eats-food': 165.53617208004533})
+    games, display = runGames(layout, pacman, ghosts, display, n_games+1, record, 1, catchExceptions, timeout, keyboardGhosts)
+
+    # n juegos con entrenamiento alto
+    pacman.setWeights({'ghost-1-distance': 1.7875370795732135, 'closest-food': -10.779379630972068, 'bias': 151.09488651951617, 'ghost-2-distance': 0.33101683742778343, '#-of-ghosts-1-step-away': -1133.2887795678223})
+    games, display = runGames(layout, pacman, ghosts, display, n_games+1, record, 1, catchExceptions, timeout, keyboardGhosts)
+
+
+def runGamesWithMenu( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30, keyboardGhosts=[], savedDisplay=None ):
+    import graphicsUtils
     import __main__
+    import time
+    __main__.__dict__['_display'] = display
+    
+    max_players = len(ghosts)
+
+    #mid_wights = {'ghost-1-distance': 7.505496605864388, 'closest-food': -40.75997789941222, '#-of-safe-intersections': 10.690708333578042, 'bias': 55.10377398236568, 'ghost-2-distance': 6.101402173364152, '#-of-ghosts-1-step-away': -2604.0274454689475, 'eats-food': 349.29952193184727}
+    #pacman.setWeights(mid_wights)
+    
+    while True:
+        # Pantalla inicial, esperar a que se seleccione la cantidad de jugadores.
+        # La cantidad maxima estara dada por max_players
+        
+        # Display ya esta inicializado con graphicsDisplay
+        # Con la opcion --frameTime -1, se puede hacer por frames
+        
+        # Activamos mostrar la pantalla de entrenamiento durante el mismo
+        display.showTrainingScreen = True
+        
+        # Iniciamos la ventana
+        display.make_window(layout.width, layout.height)
+        
+        # Presentamos pantalla de inicio
+        display.initialize(None, "start")
+
+        print display.selection
+
+        if display.selection == 1:  # Historia
+            runHistoryGames(layout, pacman, ghosts, display, record, catchExceptions, timeout, keyboardGhosts)
+        
+        if display.selection == 2:  # Infinito
+            # 100 juegos con entrenamiento en alto
+            #pacman.setWeights({'ghost-1-distance': 12.94359242827336, 'closest-food': -52.46911132365448, '#-of-safe-intersections': 7.850194983873335, 'bias': 406.81171059627815, 'ghost-2-distance': 8.38662059308811, '#-of-ghosts-1-step-away': -2736.7332471165696})
+            #pacman.setWeights({'ghost-1-distance': 1.7875370795732135, 'closest-food': -10.779379630972068, 'bias': 151.09488651951617, 'ghost-2-distance': 0.33101683742778343, '#-of-ghosts-1-step-away': -1133.2887795678223})
+            pacman.setWeights({'ghost-1-distance': 1.202518331355906, 'closest-food': -17.52317063612606, 'bias': 244.92598082600026, 'ghost-2-distance': 0.39391543570184373, '#-of-ghosts-1-step-away': -1709.0923916869842})
+            games, display = runGames(layout, pacman, ghosts, display, 10, record, 0, catchExceptions, timeout, keyboardGhosts)
+
+        if display.selection == 3:  # Demo
+            # 10 juegos con entrenamiento alto, modo automatico
+            #pacman.setWeights({'ghost-1-distance': 7.90677231488944, 'closest-food': -8.138224422237991, 'bias': 138.95803700868277, 'ghost-2-distance': 0.06922797164020886, '#-of-ghosts-1-step-away': -2987.7748161856716, 'eats-food': 346.1886947796438})
+            #pacman.setWeights({'ghost-1-distance': 1.7875370795732135, 'closest-food': -10.779379630972068, 'bias': 151.09488651951617, 'ghost-2-distance': 0.33101683742778343, '#-of-ghosts-1-step-away': -1133.2887795678223})
+            pacman.setWeights({'ghost-1-distance': 1.202518331355906, 'closest-food': -17.52317063612606, 'bias': 244.92598082600026, 'ghost-2-distance': 0.39391543570184373, '#-of-ghosts-1-step-away': -1709.0923916869842})
+            games, display = runGames(layout, pacman, ghosts, display, 100, record, 0, catchExceptions, timeout, [])
+        # Una vez seleccionados damos 1 juego de practica y 3 juegos sin entrenamiento
+        #pacman.setWeights({'ghost-1-distance': 18.667905261805245, 'closest-food': -84.14869086938502, '#-of-safe-intersections': 8.381229445965635, 'bias': 376.62628903913554, 'ghost-2-distance': 7.797186841612915, '#-of-ghosts-1-step-away': -3183.3103376329946})
+        
+        
+        # Entrenamos 20 (?) epocas
+        # 3 juegos mas con dificultad media
+        #print "Pacman is training..."
+        #games, display = runGames(layout, pacman, ghosts, display, 21, record, 20, catchExceptions, timeout, keyboardGhosts, display)
+        
+        # Entrenamos 100 (?) epocas
+        # 3 juegos mas con dificultad dificil
+        #print "Pacman is training..."
+        #games, display = runGames(layout, pacman, ghosts, display, 101, record, 100, catchExceptions, timeout, keyboardGhosts, display)
+        
+        # Fin del juego, presentamos tabla de score para anotar un nombre.
+            # Esto en vez de una tabla podria ser el score minimo del dia
+            # En caso de un score minimo nuevo, se anotarian los mails del equipo en una planilla
+            # Habria que guardar este score en un archivo o poder darlo por parametro en caso de perdida
+        # Podriamos mostrar pantallas distintas para el caso de que el min_score sea superado y otra para el caso en el que no lo sea
+        # Luego de un tiempo de mostrar el score final, volveriamos a la pantalla inicial
+        
+        # TODO: Habria que guardar la matriz de estados del Pacman entrenado para:
+            # 1. Poder entrenarlo con muchas mas iteraciones
+            # 2. Evitar el tiempo de entrenamiento
+        # En el caso de hacerlo las pantallas de entrenamiento tendrian un simple fin humoristico
+        
+        # TODO: Esperar una tecla al comienzo de cada juego?
+
+def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30, keyboardGhosts=[], savedDisplay=None ):
+    import __main__
+    import time
     __main__.__dict__['_display'] = display
 
     rules = ClassicGameRules(timeout)
     games = []
-
+    
     for i in range( numGames ):
+        game = None
         beQuiet = i < numTraining
         if beQuiet:
                 # Suppress output and graphics
             import textDisplay
             gameDisplay = textDisplay.NullGraphics()
             rules.quiet = True
+            if hasattr(display, 'showTrainingScreen') and display.showTrainingScreen:
+                display.initialize(None, "training")
         else:
-            gameDisplay = display
+            if savedDisplay is None:
+                gameDisplay = display
+            else:
+                gameDisplay = savedDisplay
             rules.quiet = False
-        game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
-        game.run()
+        
+        # If there's keyboard ghosts and not in training mode
+        if len(keyboardGhosts) > 0 and not beQuiet:
+            #for i in range(len(keyboardGhosts)):
+            #    keyboardGhosts[i].init()
+
+            #ghostType = loadAgent("KeyboardGhost", False)
+            #keyboardGhosts = [ghostType( i+1 ) for i in range( len(keyboardGhosts) )]
+
+            game = rules.newGame( layout, pacman, keyboardGhosts, gameDisplay, beQuiet, catchExceptions)
+        else:
+            game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
+
+        if beQuiet:
+            game.run()
+        else:
+            if savedDisplay is None:
+                savedDisplay = game.run()
+            else:
+                savedDisplay = game.run(savedDisplay)
+
+            if game.gameQuit:
+                return (games, display)
+            
+            # Show win / loss message
+            if hasattr(display, 'showTrainingScreen'):
+                from graphicsUtils import wait_for_keys
+                display.showResultMessage(not game.state.isWin())
+
+                keys = []
+                if len(keyboardGhosts) > 0:
+                    while 'Return' not in keys:
+                        keys = wait_for_keys()
+                else:
+                    time.sleep(1)
+                display.hideResultMessage()
+        
         if not beQuiet: games.append(game)
 
         if record:
@@ -653,17 +829,19 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
             components = {'layout': layout, 'actions': game.moveHistory}
             cPickle.dump(components, f)
             f.close()
-
+        
     if (numGames-numTraining) > 0:
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
+        progress = [float(game.state.getNumFood()) / rules.initialState.getNumFood() for game in games]
         winRate = wins.count(True)/ float(len(wins))
         print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
         print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
+        print 'Progress Rate: %.2f %%' % ((sum(progress)/len(progress))*100)
         print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
 
-    return games
+    return (games, display)
 
 if __name__ == '__main__':
     """
@@ -677,7 +855,13 @@ if __name__ == '__main__':
     > python pacman.py --help
     """
     args = readCommand( sys.argv[1:] ) # Get game components based on input
-    runGames( **args )
+    
+    if args['gameMenu']:
+        args.pop('gameMenu')
+        runGamesWithMenu( **args )
+    else:
+        args.pop('gameMenu')
+        runGames( **args )
 
     # import cProfile
     # cProfile.run("runGames( **args )")

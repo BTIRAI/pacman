@@ -13,10 +13,12 @@
 
 
 from pacman import Directions
-from game import Agent
+from game import Agent, GameStateData
+from distanceCalculator import *
 import random
 import game
 import util
+
 
 class LeftTurnAgent(game.Agent):
     "An agent that turns left at every opportunity"
@@ -50,3 +52,61 @@ class GreedyAgent(Agent):
 
 def scoreEvaluation(state):
     return state.getScore()
+
+
+
+class EscapingAgent(Agent):
+    def __init__(self):
+        self.distances = None
+
+    def getAction(self, state):
+        # Generate candidate actions
+        legal = state.getLegalPacmanActions()
+        if Directions.STOP in legal: legal.remove(Directions.STOP)
+
+        successors = [(state.generateSuccessor(0, action), action) for action in legal]
+        scored = [(self.sumDistance(state), action) for state, action in successors]
+        bestScore = max(scored)[0]
+        bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
+        return random.choice(bestActions)
+
+    def sumDistance(self,state):
+
+        if self.distances == None:
+           self.distances = computeDistances(state.data.layout)
+
+        d1 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
+        d2 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
+        new_distance = d1 + d2
+
+        return new_distance
+
+
+
+class ChasingAgent(Agent):
+    def __init__(self):
+        self.distances = None
+
+    def getAction(self, state):
+        # Generate candidate actions
+        legal = state.getLegalPacmanActions()
+        if Directions.STOP in legal: legal.remove(Directions.STOP)
+
+        successors = [(state.generateSuccessor(0, action), action) for action in legal]
+        scored = [(self.closestDistance(state), action) for state, action in successors]
+        bestScore = max(scored)[0]
+        bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
+        return random.choice(bestActions)
+
+    def closestDistance(self,state):
+
+        if self.distances == None:
+           self.distances = computeDistances(state.data.layout)
+
+        d1 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
+        d2 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
+        new_distance = d1 + d2
+
+        return -min(d1,d2)
+
+
