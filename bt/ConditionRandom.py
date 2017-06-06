@@ -11,8 +11,7 @@ class ConditionRandom(ConditionNode):
     def Execute(self):
         x = randint(1, 10)
         #i = x%2
-        print 'x ' + str(x)
-        if x < 5:
+        if True:
             self.SetStatus(NodeStatus.Failure)
             self.SetColor(NodeColor.Red)
             #print 'checking ' + str(self.name) + ' FAILURE'

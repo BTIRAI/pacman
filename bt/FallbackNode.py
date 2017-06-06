@@ -32,7 +32,7 @@ class FallbackNode(ControlNode):
                 while c.GetStatus() == NodeStatus.Idle:
 
                     #print 'waiting child ' + c.name + ' thread ' + str(thread.get_ident())
-                    time.sleep(0.1)
+                    time.sleep(0.0001)
                 #print 'child ' + c.name + ' status' + str(c.GetStatus())
 
                 if c.GetStatus() == NodeStatus.Running:
