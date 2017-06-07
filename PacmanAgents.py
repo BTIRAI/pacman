@@ -25,6 +25,7 @@ sys.path.insert(0, 'bt/')
 from SequenceNode import SequenceNode
 from FallbackNode import FallbackNode
 from PacmanActionNodes import *
+from PacmanConditionNodes import *
 from ConditionRandom import ConditionRandom
 
 from ActionExecuted import ActionExecuted
@@ -44,14 +45,19 @@ class BTAgent(Agent):
     def __init__(self):
 
 
-        s1 = FallbackNode('s1')
-        s2 = SequenceNode('s2')
+        fallback_1 = FallbackNode('s1')
+        sequence_1 = SequenceNode('s2')
 
-        a1 = Greedy('Action1')
-        c1 = ConditionRandom('Condition1')
+        escape = Escape('Escape')
+        greedy = Greedy('Greedy')
 
-        s1.AddChild(c1)
-        s1.AddChild(a1)
+
+        is_close = IsGhostClose('Is Ghost Close', 3)
+
+        sequence_1.AddChild(is_close)
+        sequence_1.AddChild(escape)
+        fallback_1.AddChild(sequence_1)
+        fallback_1.AddChild(greedy)
 
 
         self.args = stru()
@@ -61,7 +67,7 @@ class BTAgent(Agent):
         self.args.Directions = Directions
         self.args.action_executed = self.action_executed
 
-        self.bt = s1
+        self.bt = fallback_1
 
 
 

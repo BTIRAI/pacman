@@ -80,16 +80,19 @@ class Chase(ActionNode):
 
         successors = [(state.generateSuccessor(0, action), action) for action in legal]
         scored = [(self.closestDistance(state), action) for state, action in successors]
-        bestScore = max(scored)[0]
+        bestScore = min(scored)[0] #get to the one with the minumim distance
         bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
         return random.choice(bestActions)
 
     def closestDistance(self,state):
+        minumim_distance = 10000 #distance to the closest ghost
 
-        d1 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
-        d2 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(2))
+        for i in range(state.getNumAgents() - 1):
+            minumim_distance = min (minumim_distance,
+                                    getDistanceOnGrid(self.distances, state.getPacmanPosition(),
+                                                      state.getGhostPosition(i+1)))
 
-        return -min(d1,d2)
+        return minumim_distance
 
 
 class Escape(ActionNode):
@@ -125,8 +128,9 @@ class Escape(ActionNode):
         if self.distances == None:
            self.distances = computeDistances(state.data.layout)
 
-        d1 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(1))
-        d2 = getDistanceOnGrid(self.distances, state.getPacmanPosition(), state.getGhostPosition(2))
-        new_distance = d1 + d2
+        sum_distance = 0
+        for i in range(state.getNumAgents() - 1):
+            sum_distance += getDistanceOnGrid(self.distances,
+                                              state.getPacmanPosition(), state.getGhostPosition(i+1))
 
-        return new_distance
+        return sum_distance
