@@ -45,18 +45,25 @@ class BTAgent(Agent):
     def __init__(self):
 
 
-        fallback_1 = FallbackNode('s1')
-        sequence_1 = SequenceNode('s2')
+        fallback_1 = FallbackNode('f1')
+        sequence_1 = SequenceNode('s1')
+        sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
         greedy = Greedy('Greedy')
+        chase = Chase('Chase')
 
 
         is_close = IsGhostClose('Is Ghost Close', 3)
+        is_scared = IsClosestGhostScared('Is Closest Ghost Scared')
 
-        sequence_1.AddChild(is_close)
-        sequence_1.AddChild(escape)
+        sequence_1.AddChild(is_scared)
+        sequence_1.AddChild(chase)
+        sequence_2.AddChild(is_close)
+        sequence_2.AddChild(escape)
+
         fallback_1.AddChild(sequence_1)
+        fallback_1.AddChild(sequence_2)
         fallback_1.AddChild(greedy)
 
 
