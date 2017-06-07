@@ -19,78 +19,78 @@ import random
 import game
 import util
 
-import sys
-sys.path.insert(0, 'bt/')
+# import sys
+# sys.path.insert(0, 'bt/')
+# #
+# from SequenceNode import SequenceNode
+# from FallbackNode import FallbackNode
+# from PacmanActionNodes import *
+# from PacmanConditionNodes import *
+# from BehaviorTree import *
 #
-from SequenceNode import SequenceNode
-from FallbackNode import FallbackNode
-from PacmanActionNodes import *
-from PacmanConditionNodes import *
-from BehaviorTree import *
-
-from ConditionRandom import ConditionRandom
-
-from ActionExecuted import ActionExecuted
-from Draw import *
-from threading import *
+# from ConditionRandom import ConditionRandom
+#
+# from ActionExecuted import ActionExecuted
+# from Draw import *
+# from threading import *
+# #
+# #
+#
+# class stru:
+#     def __init__(self):
+#         self.state = 0
+#         self.Directions = 0
+#         self.action_executed = 0
+#         self.distances = 0
 #
 #
-
-class stru:
-    def __init__(self):
-        self.state = 0
-        self.Directions = 0
-        self.action_executed = 0
-        self.distances = 0
-
-
-class BTAgent(Agent):
-
-
-
-
-    def __init__(self):
-
-
-        fallback_1 = FallbackNode('f1')
-        sequence_1 = SequenceNode('s1')
-        sequence_2 = SequenceNode('s2')
-
-        escape = Escape('Escape')
-        greedy = ClosestDotSearch('Greedy')
-        chase = Chase('Chase')
-
-
-        is_close = IsGhostClose('Is Ghost Close', 5)
-        is_scared = IsClosestGhostScared('Is Closest Ghost Scared')
-
-        sequence_1.AddChild(is_scared)
-        sequence_1.AddChild(chase)
-        sequence_2.AddChild(is_close)
-        sequence_2.AddChild(escape)
-
-        fallback_1.AddChild(sequence_1)
-        fallback_1.AddChild(sequence_2)
-        fallback_1.AddChild(greedy)
-
-
-        self.args = stru()
-        self.action_executed = ActionExecuted()
-        self.args.distances = None
-        self.args.state = None
-        self.args.Directions = Directions
-        self.args.action_executed = self.action_executed
-
-        #thread.start_new_thread(draw_tree, (fallback_1,))
-
-        self.bt = fallback_1
-
-    def getAction(self, state):
-        self.args.state = state
-        if self.args.distances == None:
-           self.args.distances = computeDistances(state.data.layout)
-        self.bt.Execute(self.args)
-        return self.action_executed.GetAction()
+# class BTAgent(Agent):
+#
+#
+#
+#
+#     def __init__(self):
+#
+#
+#         fallback_1 = FallbackNode('f1')
+#         sequence_1 = SequenceNode('s1')
+#         sequence_2 = SequenceNode('s2')
+#
+#         escape = Escape('Escape')
+#         greedy = Greedy('Greedy')
+#         chase = Chase('Chase')
+#
+#
+#         is_close = IsGhostClose('Is Ghost Close', 5)
+#         is_scared = IsClosestGhostScared('Is Closest Ghost Scared')
+#
+#         sequence_1.AddChild(is_scared)
+#         sequence_1.AddChild(chase)
+#         sequence_2.AddChild(is_close)
+#         sequence_2.AddChild(escape)
+#
+#         fallback_1.AddChild(sequence_1)
+#         fallback_1.AddChild(sequence_2)
+#         fallback_1.AddChild(greedy)
+#
+#
+#         self.args = stru()
+#         self.action_executed = ActionExecuted()
+#         self.args.distances = None
+#         self.args.state = None
+#         self.args.Directions = Directions
+#         self.args.action_executed = self.action_executed
+#
+#         #thread.start_new_thread(draw_tree, (fallback_1,))
+#
+#         self.bt = fallback_1
+#
+#     def getAction(self, state):
+#         self.args.state = state
+#         if self.args.distances == None:
+#            self.args.distances = computeDistances(state.data.layout)
+#         self.bt.Execute(self.args)
+#         return self.action_executed.GetAction()
 
 
 class GreedyAgent(Agent):
