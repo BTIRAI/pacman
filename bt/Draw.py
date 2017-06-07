@@ -1,4 +1,12 @@
-from Tkinter import *
+try:
+    # for Python2
+    from Tkinter import  *
+except:
+    # for Python3
+    from tkinter import  *
+
+
+
 from NodeStatus import *
 from threading import RLock
 
@@ -16,7 +24,6 @@ def getDistance():
         return max(distance,0)
 
 def setDistance(newDistance):
-    print 'new offset' + str(newDistance)
     global positionLock
     global distance
     with positionLock:
@@ -35,7 +42,6 @@ def getOffsetY():
         return offsetY
 
 def setOffsetX(newOffsetX):
-    print 'new offset' + str(newOffsetX)
     global positionLock
     global offsetX
     with positionLock:
@@ -118,7 +124,6 @@ def drawNode(canvas, tree,xPos,yPos,xPosParent,yPosParent):
 
     if tree.nodeType == 'Action':
         #print 'Drawing an action'
-        print
         xSize = max(8*len(tree.name)+4,50)
         ySize = 20
         canvas.create_rectangle(xPos-xSize/2,  yPos-ySize/2, xSize+xPos-xSize/2, ySize+yPos - ySize/2, outline=nodeColor,fill='green', stipple="")
@@ -140,7 +145,7 @@ def drawNode(canvas, tree,xPos,yPos,xPosParent,yPosParent):
 
 def keyCallback(event):
     strPressed = str(repr(event.char))
-    print "pressed" + strPressed
+
 
 
     if strPressed == '\xef\x9c\x81':
@@ -148,58 +153,47 @@ def keyCallback(event):
 
 
 def keyCallbackUp(event):
-    print "pressed Up"
     setOffsetY(getOffsetY() - 10 )
 
 
 def keyCallbackDown(event):
-    print "pressed Down"
     setOffsetY(getOffsetY() + 10 )
 
 
 def keyCallbackLeft(event):
-    print "pressed Left"
     setOffsetX(getOffsetX() - 10 )
 
 
 def keyCallbackRight(event):
-    print "pressed Right"
     setOffsetX(getOffsetX() + 10 )
 
 def keyCallbackReturn(event):
-    print "pressed Return"
     setOffsetX(0)
     setOffsetY(0)
 
 
 
 def keyCallbackShiftUp(event):
-    print "pressed Shift Down"
     setOffsetY(getOffsetY() - 100 )
 
 def keyCallbackShiftDown(event):
-    print "pressed Shift Down"
     setOffsetY(getOffsetY() + 100 )
 
 
 def keyCallbackShiftLeft(event):
-    print "pressed Shift Down"
     setOffsetX(getOffsetX() - 100 )
 
 
 def keyCallbackShiftRight(event):
-    print "pressed Shift Down"
     setOffsetX(getOffsetX() + 100 )
 
 
 
 def keyCallbackPrior(event):
-    print "pressed Page Up"
     setDistance(getDistance() + 50 )
 
 
 def keyCallbackNext(event):
-    print "pressed Page Down"
     setDistance(getDistance() - 50 )
 
 
