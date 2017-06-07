@@ -20,6 +20,7 @@ import time
 import types
 import Tkinter
 
+
 _Windows = sys.platform == 'win32'  # True if on Win95/98/NT
 
 _root_window = None      # The root window for graphics output
@@ -147,8 +148,8 @@ def end_graphics():
             sleep(1)
             if _root_window != None:
                 _root_window.destroy()
-        except SystemExit, e:
-            print 'Ending graphics raised an exception:', e
+        except (SystemExit, e):
+            print ('Ending graphics raised an exception:', e)
     finally:
         _root_window = None
         _canvas = None
@@ -348,7 +349,7 @@ def move_by(object, x, y=None,
             d_w=Tkinter.tkinter.DONT_WAIT, lift=False):
     if y is None:
         try: x, y = x
-        except: raise Exception, 'incomprehensible coordinates'
+        except: raise (Exception, 'incomprehensible coordinates')
 
     horiz = True
     newCoords = []

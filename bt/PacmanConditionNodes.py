@@ -39,8 +39,6 @@ class IsClosestGhostScared(ConditionNode):
         for i in range(args.state.getNumAgents() - 1):
             dist_to_ghost_i = getDistanceOnGrid(args.distances,
                                                 args.state.getPacmanPosition(), args.state.getGhostPosition(i + 1))
-            print('dist_to_ghost_is', dist_to_ghost_i)
-
             if dist_to_ghost_i < self.closest_ghost_dist:
                 print('the ghost is closer',)
 

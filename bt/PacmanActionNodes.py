@@ -3,7 +3,7 @@ from NodeStatus import *
 import time
 import random
 from distanceCalculator import *
-
+from searchAgents import *
 
 class ActionTest(ActionNode):
 
@@ -134,3 +134,31 @@ class Escape(ActionNode):
                                               state.getPacmanPosition(), state.getGhostPosition(i+1))
 
         return sum_distance
+
+
+
+
+
+class ClosestDotSearch(ActionNode):
+
+    def __init__(self,name):
+        ActionNode.__init__(self,name)
+        self.agent = ClosestDotSearchAgent()
+        self.init = False
+
+    def Execute(self,args):
+        if not self.init:
+            self.agent.registerInitialState(args.state)
+            #self.init =  True
+        # self.SetStatus(NodeStatus.Running)
+        # self.SetColor(NodeColor.Gray)
+        self.Directions = args.Directions
+        self.distances = args.distances
+        print('Executing Action Search')
+        args.action_executed.SetAction(self.agent.getAction(args.state))
+        self.SetStatus(NodeStatus.Success)
+
+
+
+
+

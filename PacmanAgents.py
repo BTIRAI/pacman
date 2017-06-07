@@ -26,10 +26,13 @@ from SequenceNode import SequenceNode
 from FallbackNode import FallbackNode
 from PacmanActionNodes import *
 from PacmanConditionNodes import *
+from BehaviorTree import *
+
 from ConditionRandom import ConditionRandom
 
 from ActionExecuted import ActionExecuted
-
+from Draw import *
+from threading import *
 #
 #
 
@@ -42,6 +45,10 @@ class stru:
 
 
 class BTAgent(Agent):
+
+
+
+
     def __init__(self):
 
 
@@ -50,11 +57,11 @@ class BTAgent(Agent):
         sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
-        greedy = Greedy('Greedy')
+        greedy = ClosestDotSearch('Greedy')
         chase = Chase('Chase')
 
 
-        is_close = IsGhostClose('Is Ghost Close', 3)
+        is_close = IsGhostClose('Is Ghost Close', 5)
         is_scared = IsClosestGhostScared('Is Closest Ghost Scared')
 
         sequence_1.AddChild(is_scared)
@@ -74,11 +81,9 @@ class BTAgent(Agent):
         self.args.Directions = Directions
         self.args.action_executed = self.action_executed
 
+        #thread.start_new_thread(draw_tree, (fallback_1,))
+
         self.bt = fallback_1
-
-
-
-
 
     def getAction(self, state):
         self.args.state = state
