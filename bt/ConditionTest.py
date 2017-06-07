@@ -11,16 +11,16 @@ class ConditionTest(ConditionNode):
     def Execute(self):
         x = randint(1, 10)
         i = x%2
-        print 'x ' + str(x)
+        print ('x ' + str(x))
         if i == 0:
             self.SetStatus(NodeStatus.Failure)
             self.SetColor(NodeColor.Red)
-            print 'checking ' + str(self.name) + ' FAILURE'
+            print ('checking ' + str(self.name) + ' FAILURE')
         else:
             self.SetStatus(NodeStatus.Success)
             self.SetColor(NodeColor.Green)
 
-            print 'checking ' + str(self.name) + ' SUCCESS'
+            print ('checking ' + str(self.name) + ' SUCCESS')
 
 
 

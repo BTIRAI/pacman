@@ -1,6 +1,5 @@
 from ControlNode import ControlNode
 from NodeStatus import *
-import thread
 import time
 
 class SequenceNode(ControlNode):

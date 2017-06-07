@@ -34,7 +34,7 @@ from ActionExecuted import ActionExecuted
 from Draw import *
 from threading import *
 #
-#
+
 
 class stru:
     def __init__(self):
@@ -57,7 +57,7 @@ class BTAgent(Agent):
         sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
-        greedy = ClosestDotSearch('Greedy')
+        greedy = Greedy('Greedy')
         chase = Chase('Chase')
 
 
