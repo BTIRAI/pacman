@@ -11,9 +11,9 @@ class BehaviorTree:
             self.tick_frequency = tick_frequency
             self.current_action = None
 
-        def Execute(self):
+        def Execute(self,args):
              while 1:
-                    self.root.Execute()
+                    self.root.Execute(args)
                     time.sleep(1/self.tick_frequency)
 
 

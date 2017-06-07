@@ -8,7 +8,7 @@ class ConditionRandom(ConditionNode):
         ConditionNode.__init__(self,name)
 
 
-    def Execute(self):
+    def Execute(self,args):
         x = randint(1, 10)
         #i = x%2
         if True:
@@ -18,7 +18,3 @@ class ConditionRandom(ConditionNode):
         else:
             self.SetStatus(NodeStatus.Success)
             self.SetColor(NodeColor.Green)
-
-            #print 'checking ' + str(self.name) + ' SUCCESS'
-        while self.GetStatus() != NodeStatus.Idle:
-            time.sleep(0.01)

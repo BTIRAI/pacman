@@ -11,7 +11,7 @@ class SequenceNode(ControlNode):
 
 
 
-    def Execute(self):
+    def Execute(self,args):
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 
@@ -26,7 +26,8 @@ class SequenceNode(ControlNode):
 
                 if c.GetStatus() == NodeStatus.Idle:
                     #print 'starting tread ' + c.name + ' from thread ' + str(thread.get_ident())
-                    thread.start_new_thread(c.Execute,())
+                    #thread.start_new_thread(c.Execute,())
+                    c.Execute(args)
                    # print '???' + str(i)
                 while c.GetStatus() == NodeStatus.Idle:
                     #print 'waiting child ' + c.name + ' thread ' + str(thread.get_ident())

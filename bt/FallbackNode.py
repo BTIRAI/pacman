@@ -10,7 +10,7 @@ class FallbackNode(ControlNode):
         self.nodeType = 'Selector'
 
 
-    def Execute(self):
+    def Execute(self,args):
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 
@@ -26,7 +26,8 @@ class FallbackNode(ControlNode):
                     #print 'starting tread ' + c.name + ' from thread ' + str(thread.get_ident())
 
                     #print 'Executing child ' + c.name
-                    thread.start_new_thread(c.Execute,())
+                    #thread.start_new_thread(c.Execute,())
+                    c.Execute(args)
                    # print '???' + str(i)
 
                 while c.GetStatus() == NodeStatus.Idle:
