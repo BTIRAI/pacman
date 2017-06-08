@@ -8,6 +8,9 @@ from NodeStatus import *
 from threading import RLock
 from BehaviorTree import *
 from gi.repository import GObject
+from ActionTest import ActionTest
+from ConditionTest import ConditionTest
+
 
 import random
 from time import sleep
@@ -18,15 +21,15 @@ class MyDotWindow(xdot.DotWindow):
     def __init__(self):
         xdot.DotWindow.__init__(self)
 
-dotcode = """
-digraph G {
-    World[label=\"*\n?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]
-    Hello -> World
-    Ciao -> World
-    Ciao2 -> World
-    Ciao3 -> World
-}
-"""
+    dotcode = """
+    digraph G {
+        World[label=\"*\n?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]
+        Hello -> World
+        Ciao -> World
+        Ciao2 -> World
+        Ciao3 -> World
+    }
+    """
 
 
 class BTWindow(xdot.DotWindow):
@@ -39,42 +42,58 @@ class BTWindow(xdot.DotWindow):
 
         return self.dotcode
 
-    def update_widget(self):
-        print('update')
+    def get_dot_for_node(self, node):
+        type = node.nodeType
+        dotcode = node.name
+        if type == 'Sequence':
+            dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
+        elif type == 'Action':
+            dotcode += "[label=Action penwidth=\"2\"  shape=\"box\" color=\"black\"  ];\n """
+        elif type == 'Condition':
+            dotcode += "[label=Condition penwidth=\"2\"  shape=\"ellipse\" color=\"black\" ]; \n"""
+        else:
+            dotcode += ""
+        return dotcode
 
-        print('getting code')
+
+    def get_dot_for_tree(self,tree):
+        dot_code = self.get_dot_for_node(tree)
+        if tree.nodeClass != 'Leaf':
+            #is a non leaf node. Need to draw the children as well.
+            for c in tree.Children:
+                dot_code += self.get_dot_for_tree(c)
+                dot_code += tree.name + """ -> """ + c.name + """; \n"""
+        return dot_code
+
+
+
+    def update_widget(self,tree):
         symbols = ['black', 'red', 'yellow']
         random.seed
         symbol = random.choice(symbols)
-        self.dotcode = """
-        digraph G {
-            World[label=
-            """ + symbol + """
-            penwidth=\"2\"  shape=\"box\" color=\"black\" ]
-            Hello -> World
-            Ciao -> World
-            Ciao2 -> World
-            Ciao3 -> World
-        }
-        """
+        self.dotcode = """ digraph G {
+         """ + self.get_dot_for_tree(tree) + """ } """ #finalization
 
 
-        GLib.timeout_add_seconds(1, self.update_widget)
+        print(self.dotcode)
+        # GLib.timeout_add(100, self.update_widget)
         self.set_dotcode(self.dotcode)
         pass
 
 
-
 def draw():
+    fallback_1 = FallbackNode('f1')
+    sequence_1 = SequenceNode('s1')
+    sequence_2 = SequenceNode('s2')
+    action_1 = ActionTest('Action')
+    condition_1 = ConditionTest('Condition')
+
+    sequence_1.AddChild(action_1)
+    sequence_1.AddChild(condition_1)
+
     window = BTWindow()
-    window.update_widget()
-    # dcode = window.get_dot_code()
-    # window.set_dotcode(dcode)
+    window.update_widget(sequence_1)
     window.connect('delete-event', Gtk.main_quit)
-
-    #Gtk.timeout_add(250, update_widget)  # call update_widget every 250 ms
-    #Gtk.main_iteration_do(True)
-
     Gtk.main()
 
 
@@ -87,64 +106,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
     draw()
-
-
-
-
-# from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
-# import os, sys
-# import time
-#
-# class GUI:
-#     def __init__(self):
-#         self.window=Gtk.Window()
-#         self.window.set_title("Countdown")
-#         self.window.set_border_width(10)
-#         self.window.connect_after('destroy', self.destroy)
-#
-#         # main container of projct
-#         self.main_box=Gtk.VBox()
-#         self.main_box.set_spacing(5)
-#
-#         # countdown label
-#         self.countdown_label = Gtk.Label()
-#
-#         # start button
-#         self.start_button=Gtk.Button("Start!")
-#
-#         # add the elements to the window
-#         self.window.add(self.main_box)
-#         self.main_box.pack_start(self.countdown_label, False, False, 0)
-#         self.main_box.pack_start(self.start_button, False, False, 0)
-#
-#         # connect buttons
-#         self.start_button.connect_after('clicked', self.start_clicked)
-#
-#         self.window.show_all()
-#
-#     def start_clicked(self, button):
-#         self.countdown(3)
-#
-#     def countdown(self, count):
-#         if count > 0:
-#             self.countdown_label.set_text(str(count))
-#             # Manually re-add this callback with a decremented count.
-#             GLib.timeout_add_seconds(2, self.countdown, count - 1)
-#         else:
-#             self.countdown_label.set_text("Go!")
-#
-#         # Return False so the callback is not called repeatedly
-#         # as we manually re-added the callback ourselves above.
-#         return False
-#
-#     def destroy(window, self):
-#         Gtk.main_quit()
-#
-# def main():
-#     app=GUI()
-#     Gtk.main()
-#
-# if __name__ == "__main__":
-#     sys.exit(main())
