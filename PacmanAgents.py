@@ -82,8 +82,14 @@ class BTAgent(Agent):
         self.args.action_executed = self.action_executed
 
         #threading.start_new_thread(new_draw, (fallback_1,))
-        new_draw_tree(fallback_1)
-        #self.bt = fallback_1
+
+
+        # threading.Thread(target=new_draw_tree,
+        #                  args=(fallback_1,)
+        #                  ).start()
+
+
+        self.bt = fallback_1
 
     def getAction(self, state):
         self.args.state = state

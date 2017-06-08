@@ -49,18 +49,32 @@ class BTWindow(xdot.DotWindow):
         while alias in self.node_names:
             alias = alias + 'x' #manages aliases (nodes with the same name)
         self.node_names.append(alias)
-
         dotcode = alias
+
+        if node.GetColor() == NodeColor.Gray:
+            nodeColor = 'gray'
+        elif node.GetColor() == NodeColor.Green:
+            nodeColor = 'green'
+        elif node.GetColor() == NodeColor.Red:
+            nodeColor = 'red'
+        else:
+            nodeColor = 'black'
+
+
+
         if type == 'Sequence':
-            dotcode += """[label=\"->\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
+            dotcode += """[label=\"->\" penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \" ]; \n """
         elif type == 'Selector':
-                dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
+                dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \" ]; \n """
         elif type == 'Action':
-            dotcode += "[label= """ + node.name + """ penwidth=\"2\"  shape=\"box\" color=\"black\"  ];\n """
+            dotcode += "[label= """ + node.name + """ penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \"  ];\n """
         elif type == 'Condition':
-            dotcode += "[label=""" + node.name + """ penwidth=\"2\"  shape=\"ellipse\" color=\"black\" ]; \n"""
+            dotcode += "[label=""" + node.name + """ penwidth=\"2\"  shape=\"ellipse\" color=\" """ + nodeColor + """ \" ]; \n"""
         else:
             raise ('Node type not parsed')
+
+
+
         return (dotcode,alias)
 
 
