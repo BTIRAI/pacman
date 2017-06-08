@@ -5,7 +5,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 import xdot
 from NodeStatus import *
-from threading import RLock
+from threading import *
 from BehaviorTree import *
 from gi.repository import GObject
 from ActionTest import ActionTest

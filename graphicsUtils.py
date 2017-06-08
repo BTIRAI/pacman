@@ -92,10 +92,7 @@ def begin_graphics(width=640, height=480, color=formatColor(0, 0, 0), title=None
 
     # Create the canvas object
     try:
-        try:
-            _canvas = Tkinter.Canvas(_root_window, width=width, height=height)
-        except NameError:
-            _canvas = tkinter.Canvas(_root_window, width=width, height=height)
+        _canvas = tkinter.Canvas(_root_window, width=width, height=height)
         _canvas.pack()
         draw_background()
         _canvas.update()

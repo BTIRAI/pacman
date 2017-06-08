@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -31,10 +31,13 @@ from BehaviorTree import *
 from ConditionRandom import ConditionRandom
 
 from ActionExecuted import ActionExecuted
-from Draw import *
-from NewDraw import *
-import threading
+# from Draw import *
 
+from NewDraw import new_draw_tree
+import threading
+from time import sleep
+import locale
+locale.setlocale(locale.LC_NUMERIC, 'C')
 
 class stru:
     def __init__(self):
@@ -45,15 +48,9 @@ class stru:
 
 
 class BTAgent(Agent):
-
-
-
-
     def __init__(self):
-
-
-        fallback_1 = FallbackNode('fallback1')
-        sequence_1 = SequenceNode('sequence1')
+        fallback_1 = FallbackNode('f1')
+        sequence_1 = SequenceNode('s1')
         sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
@@ -81,14 +78,10 @@ class BTAgent(Agent):
         self.args.Directions = Directions
         self.args.action_executed = self.action_executed
 
-        #threading.start_new_thread(new_draw, (fallback_1,))
+        #thread.start_new_thread(draw_tree, (fallback_1,))
 
-
-        # threading.Thread(target=new_draw_tree,
-        #                  args=(fallback_1,)
-        #                  ).start()
-
-
+        draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
+        draw_thread.start()
         self.bt = fallback_1
 
     def getAction(self, state):
