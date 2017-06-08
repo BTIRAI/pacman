@@ -36,6 +36,7 @@ class BTWindow(xdot.DotWindow):
     def __init__(self):
         xdot.DotWindow.__init__(self)
         self.dotcode = None
+        self.node_names = []
 
 
     def get_dot_code(self):
@@ -44,26 +45,34 @@ class BTWindow(xdot.DotWindow):
 
     def get_dot_for_node(self, node):
         type = node.nodeType
-        dotcode = node.name
+        alias = node.name
+        while alias in self.node_names:
+            alias = alias + 'x' #manages aliases (nodes with the same name)
+        self.node_names.append(alias)
+
+        dotcode = alias
         if type == 'Sequence':
-            dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
+            dotcode += """[label=\"->\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
+        elif type == 'Selector':
+                dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\"black\" ]; \n """
         elif type == 'Action':
-            dotcode += "[label=Action penwidth=\"2\"  shape=\"box\" color=\"black\"  ];\n """
+            dotcode += "[label= """ + node.name + """ penwidth=\"2\"  shape=\"box\" color=\"black\"  ];\n """
         elif type == 'Condition':
-            dotcode += "[label=Condition penwidth=\"2\"  shape=\"ellipse\" color=\"black\" ]; \n"""
+            dotcode += "[label=""" + node.name + """ penwidth=\"2\"  shape=\"ellipse\" color=\"black\" ]; \n"""
         else:
-            dotcode += ""
-        return dotcode
+            raise ('Node type not parsed')
+        return (dotcode,alias)
 
 
     def get_dot_for_tree(self,tree):
-        dot_code = self.get_dot_for_node(tree)
+        dot_code, alias = self.get_dot_for_node(tree)
         if tree.nodeClass != 'Leaf':
             #is a non leaf node. Need to draw the children as well.
             for c in tree.Children:
-                dot_code += self.get_dot_for_tree(c)
-                dot_code += tree.name + """ -> """ + c.name + """; \n"""
-        return dot_code
+                code, new_alias = self.get_dot_for_tree(c)
+                dot_code += code
+                dot_code += tree.name + """ -> """ + new_alias + """; \n"""
+        return dot_code, alias
 
 
 
@@ -72,7 +81,7 @@ class BTWindow(xdot.DotWindow):
         random.seed
         symbol = random.choice(symbols)
         self.dotcode = """ digraph G {
-         """ + self.get_dot_for_tree(tree) + """ } """ #finalization
+         """ + self.get_dot_for_tree(tree)[0] + """ } """ #finalization
 
 
         print(self.dotcode)
@@ -81,29 +90,30 @@ class BTWindow(xdot.DotWindow):
         pass
 
 
-def draw():
+def new_draw_tree(tree):
+
+    window = BTWindow()
+    window.update_widget(tree)
+    window.connect('delete-event', Gtk.main_quit)
+    Gtk.main()
+
+
+
+# def main():
+#     window = MyDotWindow()
+#     window.set_dotcode(dotcode)
+#     window.connect('delete-event', Gtk.main_quit)
+#     Gtk.main()
+
+
+if __name__ == '__main__':
     fallback_1 = FallbackNode('f1')
     sequence_1 = SequenceNode('s1')
     sequence_2 = SequenceNode('s2')
     action_1 = ActionTest('Action')
-    condition_1 = ConditionTest('Condition')
+    condition_1 = ActionTest('Action')
 
     sequence_1.AddChild(action_1)
     sequence_1.AddChild(condition_1)
 
-    window = BTWindow()
-    window.update_widget(sequence_1)
-    window.connect('delete-event', Gtk.main_quit)
-    Gtk.main()
-
-
-
-def main():
-    window = MyDotWindow()
-    window.set_dotcode(dotcode)
-    window.connect('delete-event', Gtk.main_quit)
-    Gtk.main()
-
-
-if __name__ == '__main__':
-    draw()
+    new_draw_tree(sequence_1)
