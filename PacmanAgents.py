@@ -32,8 +32,8 @@ from ConditionRandom import ConditionRandom
 
 from ActionExecuted import ActionExecuted
 from Draw import *
-from threading import *
-#
+from NewDraw import *
+import threading
 
 
 class stru:
@@ -52,8 +52,8 @@ class BTAgent(Agent):
     def __init__(self):
 
 
-        fallback_1 = FallbackNode('f1')
-        sequence_1 = SequenceNode('s1')
+        fallback_1 = FallbackNode('fallback1')
+        sequence_1 = SequenceNode('sequence1')
         sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
@@ -61,8 +61,8 @@ class BTAgent(Agent):
         chase = Chase('Chase')
 
 
-        is_close = IsGhostClose('Is Ghost Close', 5)
-        is_scared = IsClosestGhostScared('Is Closest Ghost Scared')
+        is_close = IsGhostClose('IsGhostClose', 5)
+        is_scared = IsClosestGhostScared('IsClosestGhostScared')
 
         sequence_1.AddChild(is_scared)
         sequence_1.AddChild(chase)
@@ -81,9 +81,9 @@ class BTAgent(Agent):
         self.args.Directions = Directions
         self.args.action_executed = self.action_executed
 
-        #thread.start_new_thread(draw_tree, (fallback_1,))
-
-        self.bt = fallback_1
+        #threading.start_new_thread(new_draw, (fallback_1,))
+        new_draw_tree(fallback_1)
+        #self.bt = fallback_1
 
     def getAction(self, state):
         self.args.state = state
