@@ -20,6 +20,8 @@ class ActionTest(ActionNode):
             time.sleep(10)
 
         self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
 
 
 
@@ -30,13 +32,15 @@ class Greedy(ActionNode):
         self.distances = None
 
     def Execute(self,args):
-        # self.SetStatus(NodeStatus.Running)
-        # self.SetColor(NodeColor.Gray)
+        self.SetStatus(NodeStatus.Running)
+        self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
         self.distances = args.distances
         print('Executing Action Greedy')
         args.action_executed.SetAction(self.getAction(args.state))
         self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
 
 
 
@@ -63,13 +67,15 @@ class Chase(ActionNode):
         self.distances = None
 
     def Execute(self,args):
-        # self.SetStatus(NodeStatus.Running)
-        # self.SetColor(NodeColor.Gray)
+        self.SetStatus(NodeStatus.Running)
+        self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
         self.distances = args.distances
         print('Executing Action Chase')
         args.action_executed.SetAction(self.getAction(args.state))
         self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
 
 
 
@@ -102,13 +108,15 @@ class Escape(ActionNode):
         self.distances = None
 
     def Execute(self,args):
-        # self.SetStatus(NodeStatus.Running)
-        # self.SetColor(NodeColor.Gray)
+        self.SetStatus(NodeStatus.Running)
+        self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
         self.distances = args.distances
         print('Executing Action Escape')
         args.action_executed.SetAction(self.getAction(args.state))
         self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
 
 
 
@@ -150,13 +158,15 @@ class ClosestDotSearch(ActionNode):
         if not self.init:
             self.agent.registerInitialState(args.state)
             #self.init =  True
-        # self.SetStatus(NodeStatus.Running)
-        # self.SetColor(NodeColor.Gray)
+        self.SetStatus(NodeStatus.Running)
+        self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
         self.distances = args.distances
         print('Executing Action Search')
         args.action_executed.SetAction(self.agent.getAction(args.state))
         self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
 
 
 

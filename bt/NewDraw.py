@@ -33,8 +33,9 @@ class MyDotWindow(xdot.DotWindow):
 
 
 class BTWindow(xdot.DotWindow):
-    def __init__(self):
+    def __init__(self,tree):
         xdot.DotWindow.__init__(self)
+        self.tree = tree
         self.dotcode = None
         self.node_names = []
 
@@ -60,16 +61,14 @@ class BTWindow(xdot.DotWindow):
         else:
             nodeColor = 'black'
 
-
-
         if type == 'Sequence':
-            dotcode += """[label=\"->\" penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \" ]; \n """
+            dotcode += """[label=\"->\" penwidth=\"2\"  shape=\"box\" color=\"""" + nodeColor + """\" ]; \n """
         elif type == 'Selector':
-                dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \" ]; \n """
+                dotcode += """[label=\"?\" penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """\" ]; \n """
         elif type == 'Action':
-            dotcode += "[label= """ + node.name + """ penwidth=\"2\"  shape=\"box\" color=\" """ + nodeColor + """ \"  ];\n """
+            dotcode += "[label= """ + node.name + """ penwidth=\"2\"  shape=\"box\" color=\"""" + nodeColor + """\"  ];\n """
         elif type == 'Condition':
-            dotcode += "[label=""" + node.name + """ penwidth=\"2\"  shape=\"ellipse\" color=\" """ + nodeColor + """ \" ]; \n"""
+            dotcode += "[label=""" + node.name + """ penwidth=\"2\"  shape=\"ellipse\" color=\"""" + nodeColor + """\" ]; \n"""
         else:
             raise ('Node type not parsed')
 
@@ -90,24 +89,21 @@ class BTWindow(xdot.DotWindow):
 
 
 
-    def update_widget(self,tree):
-        symbols = ['black', 'red', 'yellow']
-        random.seed
-        symbol = random.choice(symbols)
+    def update_widget(self):
         self.dotcode = """ digraph G {
-         """ + self.get_dot_for_tree(tree)[0] + """ } """ #finalization
+         """ + self.get_dot_for_tree(self.tree)[0] + """ } """ #finalization
 
 
-        print(self.dotcode)
-        # GLib.timeout_add(100, self.update_widget)
+        GLib.timeout_add(100, self.update_widget)
+        self.node_names = []
         self.set_dotcode(self.dotcode)
         pass
 
 
 def new_draw_tree(tree):
 
-    window = BTWindow()
-    window.update_widget(tree)
+    window = BTWindow(tree)
+    window.update_widget()
     window.connect('delete-event', Gtk.main_quit)
     Gtk.main()
 
