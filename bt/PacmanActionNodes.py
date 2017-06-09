@@ -104,7 +104,6 @@ class Chase(ActionNode):
 
         for i in range(state.getNumAgents() - 1):
             ghostState = state.getGhostState(i + 1)
-
             isGhostScared = ghostState.scaredTimer > 0
             if isGhostScared:
                 distance = self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
@@ -114,7 +113,7 @@ class Chase(ActionNode):
         return minumim_distance
 
 
-class Escape(ActionNode):
+class KeepDistance(ActionNode):
 
     def __init__(self,name):
         ActionNode.__init__(self,name)
@@ -149,18 +148,79 @@ class Escape(ActionNode):
         bestScore = max(scored)[0]
         bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
         actionperformed = random.choice(bestActions)
-        # print ('actionperformed',actionperformed)
-        # input("Press Enter to continue...")
+        print ('successors', successors)
+        print ('scored', scored)
+        print ('actionperformed',actionperformed)
+        #input("Press Enter to continue...")
 
         return actionperformed
 
     def sumDistance(self,state):
         sum_distance = 0
         for i in range(state.getNumAgents() - 1):
-            sum_distance += self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
+            ghostState = state.getGhostState(i + 1)
+            isGhostScared = ghostState.scaredTimer > 0
+            if not isGhostScared:
+                sum_distance += self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
         if float(sum_distance).is_integer():
             return sum_distance
             self.old_distance = sum_distance
+        else:
+            return self.old_distance
+
+class Escape(ActionNode):
+
+    def __init__(self,name):
+        ActionNode.__init__(self,name)
+        self.distances = None
+        self.distance_calculator = None
+        self.old_distance = 1000
+
+
+    def Execute(self,args):
+        if self.distance_calculator is None:
+            self.distance_calculator = Distancer(args.state.data.layout)
+        self.SetStatus(NodeStatus.Running)
+        self.SetColor(NodeColor.Gray)
+        self.Directions = args.Directions
+        self.distances = args.distances
+        print('Executing Action Escape')
+        args.action_executed.SetAction(self.getAction(args.state))
+        self.SetStatus(NodeStatus.Success)
+        self.SetColor(NodeColor.Green)
+
+
+
+
+    def getAction(self, state):
+        # Generate candidate actions
+        legal = state.getLegalPacmanActions()
+        if self.Directions.STOP in legal: legal.remove(self.Directions.STOP)
+
+        successors = [(state.generateSuccessor(0, action), action) for action in legal]
+        scored = [(self.closestDistance(state), action) for state, action in successors]
+
+        bestScore = max(scored)[0]
+        bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
+        actionperformed = random.choice(bestActions)
+        print ('successors', successors)
+        print ('scored', scored)
+        print ('actionperformed',actionperformed)
+        #input("Press Enter to continue...")
+
+        return actionperformed
+
+    def closestDistance(self,state):
+        closest = 1000
+        for i in range(state.getNumAgents() - 1):
+            ghostState = state.getGhostState(i + 1)
+            isGhostScared = ghostState.scaredTimer > 0
+            if not isGhostScared:
+                closest = min(closest,
+                              self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1)))
+        if float(closest).is_integer():
+            return closest
+            self.old_distance = closest
         else:
             return self.old_distance
 

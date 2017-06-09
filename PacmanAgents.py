@@ -53,23 +53,34 @@ class BTAgent(Agent):
         fallback_1 = FallbackNode('f1')
         sequence_1 = SequenceNode('s1')
         sequence_2 = SequenceNode('s2')
+        sequence_3 = SequenceNode('s3')
 
         escape = Escape('Escape')
+        keep_distance = KeepDistance('KeepDistance')
         search = ClosestDotSearch('Search')
         greedy = Greedy('Greedy')
         chase = Chase('Chase')
 
 
         is_close = IsGhostClose('IsGhostClose', 5)
+        is_closer = IsGhostClose('IsGhostCloser', 2)
         is_scared = IsClosestGhostScared('IsClosestGhostScared')
 
-        sequence_1.AddChild(is_scared)
-        sequence_1.AddChild(chase)
-        sequence_2.AddChild(is_close)
-        sequence_2.AddChild(escape)
+
+
+        sequence_1.AddChild(is_closer)
+        sequence_1.AddChild(escape)
+
+        sequence_2.AddChild(is_scared)
+        sequence_2.AddChild(chase)
+
+        sequence_3.AddChild(is_close)
+        sequence_3.AddChild(escape)
 
         fallback_1.AddChild(sequence_1)
         fallback_1.AddChild(sequence_2)
+        fallback_1.AddChild(sequence_3)
+
         fallback_1.AddChild(search)
         fallback_1.AddChild(greedy)
 
