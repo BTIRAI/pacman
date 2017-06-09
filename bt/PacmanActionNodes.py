@@ -88,10 +88,16 @@ class Chase(ActionNode):
         scored = [(self.closestDistance(state), action) for state, action in successors]
         bestScore = min(scored)[0] #get to the one with the minumim distance
         bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
-        return random.choice(bestActions)
+        actionperformed = random.choice(bestActions)
+        print ('successors', successors)
+        print ('scored', scored)
+        print ('actionperformed',actionperformed)
+        # input("Press Enter to continue...")
+
+        return actionperformed
 
     def closestDistance(self,state):
-        minumim_distance = 10000 #distance to the closest ghost
+        minumim_distance = 999 #distance to the closest ghost
 
         for i in range(state.getNumAgents() - 1):
             minumim_distance = min (minumim_distance,
@@ -127,9 +133,14 @@ class Escape(ActionNode):
 
         successors = [(state.generateSuccessor(0, action), action) for action in legal]
         scored = [(self.sumDistance(state), action) for state, action in successors]
+
         bestScore = max(scored)[0]
         bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
-        return random.choice(bestActions)
+        actionperformed = random.choice(bestActions)
+        # print ('actionperformed',actionperformed)
+        # input("Press Enter to continue...")
+
+        return actionperformed
 
     def sumDistance(self,state):
 
