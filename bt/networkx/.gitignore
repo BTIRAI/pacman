@@ -1,0 +1,36 @@
+*.pyc
+__pycache__
+*~
+.DS_Store
+build/*
+networkx/version.py
+examples/*/*.png
+doc/source/networkx-documentation.zip
+doc/source/networkx_reference.pdf
+doc/source/networkx_tutorial.pdf
+doc/source/templates/gallery.html
+doc/gh-pages
+doc/build
+.coverage
+*.class
+
+# Generated while building documentation.
+doc/source/static/examples/*
+doc/source/reference/generated/*
+doc/source/examples/*
+
+# Generated when 'python setup_egg.py'
+networkx.egg-info/
+
+# Sublime Text project files
+*.sublime-project
+*.sublime-workspace
+
+# IPython Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Vim's swap files
+*.sw[op]
+
+#Spyder project file
+.spyderproject
