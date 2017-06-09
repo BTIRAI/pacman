@@ -120,6 +120,7 @@ class Escape(ActionNode):
         ActionNode.__init__(self,name)
         self.distances = None
         self.distance_calculator = None
+        self.old_distance = 0
 
 
     def Execute(self,args):
@@ -157,8 +158,11 @@ class Escape(ActionNode):
         sum_distance = 0
         for i in range(state.getNumAgents() - 1):
             sum_distance += self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
-
-        return sum_distance
+        if float(sum_distance).is_integer():
+            return sum_distance
+            self.old_distance = sum_distance
+        else:
+            return self.old_distance
 
 
 
