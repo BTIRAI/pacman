@@ -49,11 +49,13 @@ class stru:
 
 class BTAgent(Agent):
     def __init__(self):
+
         fallback_1 = FallbackNode('f1')
         sequence_1 = SequenceNode('s1')
         sequence_2 = SequenceNode('s2')
 
         escape = Escape('Escape')
+        search = ClosestDotSearch('Search')
         greedy = Greedy('Greedy')
         chase = Chase('Chase')
 
@@ -68,6 +70,7 @@ class BTAgent(Agent):
 
         fallback_1.AddChild(sequence_1)
         fallback_1.AddChild(sequence_2)
+        fallback_1.AddChild(search)
         fallback_1.AddChild(greedy)
 
 
@@ -117,6 +120,7 @@ class EscapingAgent(Agent):
         self.distances = None
 
     def getAction(self, state):
+
         # Generate candidate actions
         legal = state.getLegalPacmanActions()
         if Directions.STOP in legal: legal.remove(Directions.STOP)

@@ -65,8 +65,11 @@ class Chase(ActionNode):
     def __init__(self,name):
         ActionNode.__init__(self,name)
         self.distances = None
+        self.distance_calculator = None
 
     def Execute(self,args):
+        if self.distance_calculator is None:
+            self.distance_calculator = Distancer(args.state.data.layout)
         self.SetStatus(NodeStatus.Running)
         self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
@@ -92,7 +95,7 @@ class Chase(ActionNode):
         print ('successors', successors)
         print ('scored', scored)
         print ('actionperformed',actionperformed)
-        # input("Press Enter to continue...")
+        #input("Press Enter to continue...")
 
         return actionperformed
 
@@ -100,9 +103,13 @@ class Chase(ActionNode):
         minumim_distance = 999 #distance to the closest ghost
 
         for i in range(state.getNumAgents() - 1):
-            minumim_distance = min (minumim_distance,
-                                    getDistanceOnGrid(self.distances, state.getPacmanPosition(),
-                                                      state.getGhostPosition(i+1)))
+            ghostState = state.getGhostState(i + 1)
+
+            isGhostScared = ghostState.scaredTimer > 0
+            if isGhostScared:
+                distance = self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
+                print('distance from ghost ', i, 'is: ', distance )
+                minumim_distance = min (minumim_distance, distance)
 
         return minumim_distance
 
@@ -112,8 +119,12 @@ class Escape(ActionNode):
     def __init__(self,name):
         ActionNode.__init__(self,name)
         self.distances = None
+        self.distance_calculator = None
+
 
     def Execute(self,args):
+        if self.distance_calculator is None:
+            self.distance_calculator = Distancer(args.state.data.layout)
         self.SetStatus(NodeStatus.Running)
         self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
@@ -143,14 +154,9 @@ class Escape(ActionNode):
         return actionperformed
 
     def sumDistance(self,state):
-
-        if self.distances == None:
-           self.distances = computeDistances(state.data.layout)
-
         sum_distance = 0
         for i in range(state.getNumAgents() - 1):
-            sum_distance += getDistanceOnGrid(self.distances,
-                                              state.getPacmanPosition(), state.getGhostPosition(i+1))
+            sum_distance += self.distance_calculator.getDistance(state.getPacmanPosition(), state.getGhostPosition(i+1))
 
         return sum_distance
 
@@ -168,15 +174,26 @@ class ClosestDotSearch(ActionNode):
     def Execute(self,args):
         if not self.init:
             self.agent.registerInitialState(args.state)
-            #self.init =  True
+            self.init =  True
         self.SetStatus(NodeStatus.Running)
         self.SetColor(NodeColor.Gray)
         self.Directions = args.Directions
         self.distances = args.distances
         print('Executing Action Search')
-        args.action_executed.SetAction(self.agent.getAction(args.state))
-        self.SetStatus(NodeStatus.Success)
-        self.SetColor(NodeColor.Green)
+        legal = args.state.getLegalPacmanActions()
+        if self.Directions.STOP in legal: legal.remove(self.Directions.STOP)
+
+        action_executed = self.agent.getAction(args.state)
+
+        if action_executed in legal:
+            args.action_executed.SetAction(action_executed)
+            self.SetStatus(NodeStatus.Success)
+            self.SetColor(NodeColor.Green)
+        else:
+            #handle illegal move
+            self.SetStatus(NodeStatus.Failure)
+            self.SetColor(NodeColor.Red)
+
 
 
 
