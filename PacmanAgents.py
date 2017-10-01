@@ -33,7 +33,7 @@ from ConditionRandom import ConditionRandom
 from ActionExecuted import ActionExecuted
 # from Draw import *
 
-from NewDraw import new_draw_tree
+#from NewDraw import new_draw_tree
 import threading
 from time import sleep
 import locale
@@ -94,8 +94,9 @@ class BTAgent(Agent):
 
         #thread.start_new_thread(draw_tree, (fallback_1,))
 
-        draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
-        draw_thread.start()
+        #draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
+        #draw_thread.start()
+
         self.bt = fallback_1
 
     def getAction(self, state):
