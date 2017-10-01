@@ -53,9 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
   ret->registerModel<SelectorModel>("Control");
 
   //ret->registerModel<IfThenElseModel>("Control");
-  ret->registerModel<ActionNodeModel>("Action");
-  ret->registerModel<ConditionNodeModel>("Condition");
-  ret->registerModel<YARPConditionNodeModel>("Condition");
+  ret->registerModel<EscapeNodeModel>("Action");
+  ret->registerModel<GreedyNodeModel>("Action");
+  ret->registerModel<IsCloseConditionNodeModel>("Condition");
   ret->registerModel<DecoratorNodeModel>("Decorator");
   //ret->registerModel<SubtreeNodeModel>("SubTree");
 

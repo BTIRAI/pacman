@@ -26,24 +26,24 @@ public:
 
 
 
-class YARPConditionNodeModel : public BehaviorTreeNodeModel
+class IsCloseConditionNodeModel : public BehaviorTreeNodeModel
 {
 public:
-    YARPConditionNodeModel():
-        BehaviorTreeNodeModel("YARP Condition", NodeFactory::get().getActionParameterModel() )
+    IsCloseConditionNodeModel():
+        BehaviorTreeNodeModel("Is Ghost Close", NodeFactory::get().getActionParameterModel() )
     { }
     int BTType()
     {
         return BT::CONDITION;
     }
 
-    virtual ~YARPConditionNodeModel() {}
+    virtual ~IsCloseConditionNodeModel() {}
 
     virtual unsigned int  nPorts(PortType portType) const override
     { return (portType==PortType::In) ? 1:0; }
 
     virtual std::unique_ptr<NodeDataModel> clone() const override
-    { return  std::unique_ptr<NodeDataModel>( new YARPConditionNodeModel ); }
+    { return  std::unique_ptr<NodeDataModel>( new IsCloseConditionNodeModel ); }
 
-    virtual QString name() const override { return QString("YARP Condition"); }
+    virtual QString name() const override { return QString("Is Ghost Close"); }
 };

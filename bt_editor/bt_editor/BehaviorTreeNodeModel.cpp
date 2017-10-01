@@ -69,17 +69,17 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
 
     _main_widget = new QWidget;
     _label = new QLabel( _main_widget );
-    _ID_selection_combobox = new QComboBox(_main_widget);
+    //_ID_selection_combobox = new QComboBox(_main_widget);
     std::cout << "combobox created" << std::endl;
     _label->setText( name );
 
     QVBoxLayout *main_layout = new QVBoxLayout( _main_widget );
     QHBoxLayout *top_layout  = new QHBoxLayout(  );
     //_line_edit = new QLineEdit(_main_widget);
-    _text_edit = new QTextEdit (_main_widget);
+    //_text_edit = new QTextEdit (_main_widget);
 
-    _text_edit->setTextColor(Qt::black);
-    _ID_selection_combobox->setStyleSheet("color: black; background-color: white");
+    //_text_edit->setTextColor(Qt::black);
+    //_ID_selection_combobox->setStyleSheet("color: black; background-color: white");
 
 
     //_line_edit->setStyleSheet("background-color: white");
@@ -88,18 +88,18 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
     _form_layout = new QFormLayout( _params_widget );
 
     top_layout->addWidget( _label );
-    top_layout->addWidget( _ID_selection_combobox );
+    //top_layout->addWidget( _ID_selection_combobox );
 
     main_layout->addLayout(top_layout);
     //main_layout->addWidget(_params_widget);
     //main_layout->addWidget(_line_edit);
-    main_layout->addWidget(_text_edit);
+    //main_layout->addWidget(_text_edit);
 
-    QStringList combo_items = get_all_files_names_within_folder(".", name.toStdString());
+    //QStringList combo_items = get_all_files_names_within_folder(".", name.toStdString());
 
 
 
-    _ID_selection_combobox->addItems(combo_items);
+    //_ID_selection_combobox->addItems(combo_items);
     std::cout << "combobox items added" << std::endl;
 
     QFont font = _label->font();
@@ -122,16 +122,16 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
     main_layout->setMargin(0);
     _main_widget->setStyleSheet("background-color: transparent; color: white; ");
 
-    if(!combo_items.empty())
-    {
-        onComboBoxUpdated(combo_items[0]);
-    }
+//    if(!combo_items.empty())
+//    {
+//        onComboBoxUpdated(combo_items[0]);
+//    }
 
     connect(_text_edit, SIGNAL(textChanged()),this,
             SLOT(onTextBoxUpdated()));
 
-    connect(_ID_selection_combobox, SIGNAL(currentIndexChanged(QString)),
-            this, SLOT(onComboBoxUpdated(QString)) );
+//    connect(_ID_selection_combobox, SIGNAL(currentIndexChanged(QString)),
+//            this, SLOT(onComboBoxUpdated(QString)) );
 }
 
 QString BehaviorTreeNodeModel::caption() const {
@@ -140,7 +140,7 @@ QString BehaviorTreeNodeModel::caption() const {
 
 QString BehaviorTreeNodeModel::type() const
 {
-    return _ID_selection_combobox->currentText();
+    return QString("");
 }
 
 QString BehaviorTreeNodeModel::get_line_edit()
@@ -286,7 +286,7 @@ void BehaviorTreeNodeModel::restore(const QJsonObject &nodeJson)
 void BehaviorTreeNodeModel::lock(bool locked)
 {
     _ID_selection_combobox->setEnabled( !locked );
-    _text_edit->setEnabled(!locked);
+    //_text_edit->setEnabled(!locked);
 
 //    for(int row = 0; row < _form_layout->rowCount(); row++)
 //    {

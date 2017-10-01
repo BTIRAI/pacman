@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 #include <mutex>
+#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
+
 
 
 
@@ -474,6 +476,20 @@ int getMode()
 
 void runTree(QtNodes::FlowScene* scene)
 {
+
+    std::cout << "Initializing" << std::endl;
+
+    Py_Initialize();
+
+    std::cout << "Init done" << std::endl;
+
+
+    PyRun_SimpleString("import sys");
+
+    std::cout << "Running pacman" << std::endl;
+
+     PyRun_SimpleString("pacman.py -p BTAgent");
+     std::cout << "DONE" << std::endl;
 
     QtNodes::Node* root;
     std::vector<QtNodes::Node*> roots = findRoots(*scene);
