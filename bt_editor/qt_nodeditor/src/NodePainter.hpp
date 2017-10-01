@@ -35,7 +35,8 @@ public:
   drawNodeRect(QPainter* painter,
                NodeGeometry const& geom,
                NodeDataModel const* model,
-               NodeGraphicsObject const & graphicsObject);
+               NodeGraphicsObject const & graphicsObject,
+               Node & node);
 
   static
   void

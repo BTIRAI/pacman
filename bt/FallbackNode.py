@@ -10,6 +10,19 @@ class FallbackNode(ControlNode):
 
 
     def Execute(self,args):
+
+        if (self.isRoot):
+            print(self.name + " ROOT")
+            message = self.GetString("")
+
+            # Send Data
+            try:
+                self.s.sendall(message.encode())
+            except socket.error:
+                print("Failed to send.")
+
+        else:
+            print(self.name + "NOT ROOT")
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 

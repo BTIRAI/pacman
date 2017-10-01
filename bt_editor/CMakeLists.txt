@@ -93,4 +93,4 @@ message("the value of BTSrcLibrary  EDITOR: " ${BTHeadLibrary})
 
 add_executable(behavior_tree_editor ${APP_CPPS} ${FORMS_HEADERS})
 target_link_libraries(behavior_tree_editor qt_node_editor
-    ${catkin_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+    ${catkin_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lws2_32 )

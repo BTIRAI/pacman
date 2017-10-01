@@ -127,8 +127,6 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
 //        onComboBoxUpdated(combo_items[0]);
 //    }
 
-    connect(_text_edit, SIGNAL(textChanged()),this,
-            SLOT(onTextBoxUpdated()));
 
 //    connect(_ID_selection_combobox, SIGNAL(currentIndexChanged(QString)),
 //            this, SLOT(onComboBoxUpdated(QString)) );
@@ -143,24 +141,7 @@ QString BehaviorTreeNodeModel::type() const
     return QString("");
 }
 
-QString BehaviorTreeNodeModel::get_line_edit()
-{
-    return _line_edit->text();
-}
 
-
-QString BehaviorTreeNodeModel::get_text_edit()
-{
-    return _text_edit->toPlainText();
-}
-
-void BehaviorTreeNodeModel::lastComboItem() const
-{
-    // TODO DO IT!
-    std::cout << "Setting combobox item" << std::endl;
-    // ID_selection_combobox->isEnabled();
-    std::cout << "combobox item SET" << std::endl;
-}
 
 
 std::vector<std::pair<QString, QString>> BehaviorTreeNodeModel::getCurrentParameters() const
@@ -212,8 +193,6 @@ void BehaviorTreeNodeModel::restore(std::map<QString,QString> attributes)
         }
         const QString type_name = v_type->second;
 
-        _ID_selection_combobox->setCurrentText( type_name );
-        onComboBoxUpdated( type_name );
         attributes.erase(v_type);
         //--------------------------
         auto v_name = attributes.find("name");
@@ -285,7 +264,6 @@ void BehaviorTreeNodeModel::restore(const QJsonObject &nodeJson)
 
 void BehaviorTreeNodeModel::lock(bool locked)
 {
-    _ID_selection_combobox->setEnabled( !locked );
     //_text_edit->setEnabled(!locked);
 
 //    for(int row = 0; row < _form_layout->rowCount(); row++)
@@ -338,6 +316,7 @@ void BehaviorTreeNodeModel::lock(bool locked)
 
 void BehaviorTreeNodeModel::onComboBoxUpdated(QString item_text)
 {
+    return;
     std::ifstream file(item_text.toStdString());
     std::string str;
     std::string file_contents;
@@ -346,18 +325,7 @@ void BehaviorTreeNodeModel::onComboBoxUpdated(QString item_text)
         file_contents += str;
         file_contents.push_back('\n');
     }
-    _text_edit->setText(file_contents.c_str());
 }
 
-void BehaviorTreeNodeModel::onTextBoxUpdated()
-{
-
-    std::ofstream myfile;
-    myfile.open (_ID_selection_combobox->currentText().toStdString().c_str());
-    myfile << _text_edit->toPlainText().toStdString().c_str();
-    myfile.close();
-
-    std::cout << "new data added" << std::endl;
-}
 
 

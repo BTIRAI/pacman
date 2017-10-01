@@ -8,3 +8,8 @@ class LeafNode(TreeNode):
     def __init__(self, name):
         TreeNode.__init__(self,name)
         self.nodeClass = 'Leaf'
+
+    def GetString(self, string):
+        return str(self.name)
+
+

@@ -67,22 +67,31 @@ class BTAgent(Agent):
         is_scared = IsClosestGhostScared('IsClosestGhostScared')
 
 
+        fallback_1.AddChild(is_close)
+        fallback_1.AddChild(escape)
+        sequence_1.AddChild(fallback_1)
+        sequence_1.AddChild(greedy)
 
-        sequence_1.AddChild(is_closer)
-        sequence_1.AddChild(escape)
+        sequence_1.isRoot = True
+        sequence_1.CreateSocket()
 
-        sequence_2.AddChild(is_scared)
-        sequence_2.AddChild(chase)
 
-        sequence_3.AddChild(is_close)
-        sequence_3.AddChild(escape)
-
-        fallback_1.AddChild(sequence_1)
-        fallback_1.AddChild(sequence_2)
-        fallback_1.AddChild(sequence_3)
-
-        fallback_1.AddChild(search)
-        fallback_1.AddChild(greedy)
+        #
+        # sequence_1.AddChild(is_closer)
+        # sequence_1.AddChild(escape)
+        #
+        # sequence_2.AddChild(is_scared)
+        # sequence_2.AddChild(chase)
+        #
+        # sequence_3.AddChild(is_close)
+        # sequence_3.AddChild(escape)
+        #
+        # fallback_1.AddChild(sequence_1)
+        # fallback_1.AddChild(sequence_2)
+        # fallback_1.AddChild(sequence_3)
+        #
+        # fallback_1.AddChild(search)
+        # fallback_1.AddChild(greedy)
 
 
         self.args = stru()
@@ -97,7 +106,7 @@ class BTAgent(Agent):
         #draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
         #draw_thread.start()
 
-        self.bt = fallback_1
+        self.bt = sequence_1
 
     def getAction(self, state):
         self.args.state = state

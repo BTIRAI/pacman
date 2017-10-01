@@ -1,6 +1,12 @@
 from ControlNode import ControlNode
 from NodeStatus import *
 import time
+import socket
+import sys
+BUFSIZE = 4096
+
+
+
 
 class SequenceNode(ControlNode):
 
@@ -10,7 +16,42 @@ class SequenceNode(ControlNode):
 
 
 
+
     def Execute(self,args):
+        if (self.isRoot):
+            print(self.name + "ROOT")
+            message = self.GetString("")
+
+
+
+
+            # Start listening
+            self.s.listen(10)
+            print("Socket Listening")
+
+            # Accept connection
+            print("Accepting Connection")
+
+            conn, addr = self.s.accept()
+            print("Connected to %s:%s" % (addr[0], addr[1]))
+
+            BUFFER = bytes()
+
+            while (True):
+                data = conn.recv(BUFSIZE)
+                if not data: break
+                print(data)
+
+
+            message = self.GetString('')
+
+
+            print('sending message')
+            conn.sendall(message.encode())
+
+            print('message sent')
+        else:
+            print(self.name + "NOT ROOT")
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 

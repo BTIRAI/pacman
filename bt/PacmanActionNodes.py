@@ -19,7 +19,7 @@ class ActionTest(ActionNode):
             #print self.name + ' executing'
             time.sleep(10)
 
-        self.SetStatus(NodeStatus.Success)
+        self.SetStatus(NodeStatus.Failure)
         self.SetColor(NodeColor.Green)
 
 
@@ -38,7 +38,7 @@ class Greedy(ActionNode):
         self.distances = args.distances
         print('Executing Action Greedy')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Success)
+        self.SetStatus(NodeStatus.Failure)
         self.SetColor(NodeColor.Green)
 
 
@@ -76,7 +76,7 @@ class Chase(ActionNode):
         self.distances = args.distances
         print('Executing Action Chase')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Success)
+        self.SetStatus(NodeStatus.Failure)
         self.SetColor(NodeColor.Green)
 
 
@@ -131,7 +131,7 @@ class KeepDistance(ActionNode):
         self.distances = args.distances
         print('Executing Action Escape')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Success)
+        self.SetStatus(NodeStatus.Failure)
         self.SetColor(NodeColor.Green)
 
 
@@ -186,7 +186,7 @@ class Escape(ActionNode):
         self.distances = args.distances
         print('Executing Action Escape')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Success)
+        self.SetStatus(NodeStatus.Failure)
         self.SetColor(NodeColor.Green)
 
 
@@ -251,7 +251,7 @@ class ClosestDotSearch(ActionNode):
 
         if action_executed in legal:
             args.action_executed.SetAction(action_executed)
-            self.SetStatus(NodeStatus.Success)
+            self.SetStatus(NodeStatus.Failure)
             self.SetColor(NodeColor.Green)
         else:
             #handle illegal move

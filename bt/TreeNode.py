@@ -19,6 +19,7 @@ class TreeNode:
         self.nodeType = 'Idle'
         self.statusLock = RLock()
         self.colorLock = RLock()
+        self.isRoot = False
 
 
     def GetStatus(self):
@@ -45,6 +46,9 @@ class TreeNode:
         print(self.name)
 
     @abstractmethod
+    def GetString(self, string):
+        return
+
     def Execute(self, args):
         return
 

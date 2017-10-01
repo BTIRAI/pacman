@@ -409,6 +409,7 @@ void MainWindow::on_selectMode_sliderPressed()
 
 void MainWindow::on_selectMode_valueChanged(int value)
 {
+
   bool locked = value == 1;
   lockEditing( locked );
 
@@ -422,19 +423,24 @@ void MainWindow::on_selectMode_valueChanged(int value)
 
   if (locked)
   {
+      std::cout << "RUNNING" << std::endl;
       setMode(1);
 
       for (auto& it: _main_scene->nodes() )
       {
         QtNodes::Node* node = it.second.get();
-        node->nodeGraphicsObject().update(); // to color ti
+       // node->nodeGraphicsObject().update(); // to color ti
       }
-      std::thread t(&runTree, _main_scene);
-      t.detach();
+
+      runTree(_main_scene);
+      //std::thread t(&runTree, _main_scene);
+      //t.detach();
 
   }
   else
   {
+      std::cout << "STOP" << std::endl;
+
       setMode(0);
   }
 }
@@ -509,7 +515,6 @@ void MainWindow::on_actionAdd_Action_triggered()
 
         BehaviorTreeNodeModel& node_on_scene = (BehaviorTreeNodeModel&)_main_scene->createNode( std::move(dataModel) );
 
-        node_on_scene.lastComboItem();
 
     }
 }

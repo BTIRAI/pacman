@@ -2,6 +2,14 @@ from TreeNode import TreeNode
 from abc import ABCMeta, abstractmethod
 from NodeStatus import NodeStatus
 
+
+import socket
+import sys
+
+HOST = '127.0.0.1'
+PORT = 8934
+ADDR = (HOST, PORT)
+
 class ControlNode(TreeNode):
     __metaclass__ = ABCMeta  # abstract class
 
@@ -9,6 +17,24 @@ class ControlNode(TreeNode):
         TreeNode.__init__(self,name)
         self.nodeClass = 'Control'
         self.Children = []
+        # Create Socket
+
+    def CreateSocket(self):
+        try:
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except (socket.error):
+            print("Failed to create socket")
+            sys.exit()
+        print("Socket created")
+
+        # Bind to adress
+        try:
+            self.s.bind((HOST, PORT))
+        except (socket.error):
+            print("Bind failed. Closing...")
+            sys.exit()
+        print("Socket bound.")
+
 
     def AddChild(self,child):
         self.Children.append(child)
@@ -16,6 +42,11 @@ class ControlNode(TreeNode):
     def GetChildren(self):
         return self.Children
 
+    def GetString(self, string):
+        string1 = ""
+        for c in self.Children:
+            string1 = str(string1 + '|' + c.GetString(string))
+        return string1 + '|' + str(self.name)
 
 
     def HaltChildren(self,h):

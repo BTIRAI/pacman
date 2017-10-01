@@ -59,18 +59,15 @@ public:
 
   virtual void lock(bool locked);
 
-  QString get_line_edit();
-  QString get_text_edit();
+
   void lastComboItem() const;
 private:
   QWidget*   _main_widget;
   QWidget*   _params_widget;
   QFormLayout *_form_layout;
   QLabel*    _label;
-  QComboBox* _ID_selection_combobox;
   QString    _ID;
-  QLineEdit* _line_edit;
-  QTextEdit * _text_edit;
+
 
   const NodeFactory::ParametersModel& _parameter_model;
 

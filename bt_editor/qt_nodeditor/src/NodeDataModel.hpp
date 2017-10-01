@@ -78,9 +78,6 @@ public:
   save() const override;
 
 
-  virtual
-  QString get_line_edit() = 0;
-
 
 public:
 

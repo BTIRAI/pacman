@@ -14,6 +14,9 @@
 #include "FlowScene.hpp"
 #include "bt_editor/utils.h"
 
+
+
+
 using QtNodes::NodePainter;
 using QtNodes::NodeGeometry;
 using QtNodes::NodeGraphicsObject;
@@ -40,7 +43,7 @@ paint(QPainter* painter,
     //--------------------------------------------
     NodeDataModel const * model = node.nodeDataModel();
 
-    drawNodeRect(painter, geom, model, graphicsObject);
+    drawNodeRect(painter, geom, model, graphicsObject, node);
 
     drawConnectionPoints(painter, geom, state, model, scene);
 
@@ -67,7 +70,8 @@ NodePainter::
 drawNodeRect(QPainter* painter,
              NodeGeometry const& geom,
              NodeDataModel const* model,
-             NodeGraphicsObject const & graphicsObject)
+             NodeGraphicsObject const & graphicsObject,
+             Node & node)
 {
     NodeStyle const& nodeStyle = model->nodeStyle();
 
@@ -76,10 +80,18 @@ drawNodeRect(QPainter* painter,
             : nodeStyle.NormalBoundaryColor;
 
 
+
+
+
+
+
+   // node.setColor(Qt::red);
+
     if(getMode() == 1)
     {
-
         //COLOR HERE
+        color = node.color();
+        //_node._color = Qt::red;
     }
 
 

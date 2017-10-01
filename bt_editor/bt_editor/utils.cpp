@@ -18,6 +18,23 @@
 #endif
 
 
+#define WIN32_LEAN_AND_MEAN
+
+#include <winsock2.h>
+#include <Ws2tcpip.h>
+#include <stdio.h>
+#include <iostream>
+
+// Link with ws2_32.lib
+#pragma comment(lib, "Ws2_32.lib")
+
+#define DEFAULT_BUFLEN 512
+#define DEFAULT_PORT "27015"
+
+
+
+
+
 std::vector<QtNodes::Node*> findRoots(const QtNodes::FlowScene &scene)
 {
     std::set<QUuid> roots;
@@ -483,19 +500,19 @@ int getMode()
 void runTree(QtNodes::FlowScene* scene)
 {
 
-    std::cout << "Initializing" << std::endl;
+//    std::cout << "Initializing" << std::endl;
 
-    Py_Initialize();
+//    Py_Initialize();
 
-    std::cout << "Init done" << std::endl;
+//    std::cout << "Init done" << std::endl;
 
 
-    PyRun_SimpleString("import sys");
+//    PyRun_SimpleString("import sys");
 
-    std::cout << "Running pacman" << std::endl;
+//    std::cout << "Running pacman" << std::endl;
 
-     PyRun_SimpleString("pacman.py -p BTAgent");
-     std::cout << "DONE" << std::endl;
+//     PyRun_SimpleString("pacman.py -p BTAgent");
+//     std::cout << "DONE" << std::endl;
 
     QtNodes::Node* root;
     std::vector<QtNodes::Node*> roots = findRoots(*scene);
@@ -510,6 +527,95 @@ void runTree(QtNodes::FlowScene* scene)
 
     std::cout << roots.size() <<" Root found!: " << root->nodeDataModel()->name().toStdString() << std::endl;
 
+     std::cout << "Getting Shit togheter Socket" << std::endl;
+
+    WSADATA wsaData;
+    int iResult;
+
+    SOCKET ConnectSocket = INVALID_SOCKET;
+    struct sockaddr_in clientService;
+
+    char *sendbuf = "this is a test";
+    char recvbuf[DEFAULT_BUFLEN];
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    //----------------------
+    // Initialize Winsock
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != NO_ERROR) {
+      std::cout << "WSAStartup failed: " << iResult << std::endl;
+      return;
+    }
+    std::cout << "Creating Socket" << std::endl;
+
+    //----------------------
+    // Create a SOCKET for connecting to server
+    ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (ConnectSocket == INVALID_SOCKET) {
+        std::cout << "Error at socket(): " << WSAGetLastError() << std::endl;
+        WSACleanup();
+        return;
+    }
+
+    //----------------------
+    // The sockaddr_in structure specifies the address family,
+    // IP address, and port of the server to be connected to.
+    clientService.sin_family = AF_INET;
+    clientService.sin_addr.s_addr = inet_addr( "127.0.0.1" );
+    clientService.sin_port = htons( 8934 );
+
+
+    //----------------------
+    // Connect to server.
+    iResult = connect( ConnectSocket, (SOCKADDR*) &clientService, sizeof(clientService) );
+    if ( iResult == SOCKET_ERROR) {
+        closesocket (ConnectSocket);
+        std::cout << "Unable to connect to server: " <<  WSAGetLastError() << std::endl;
+        WSACleanup();
+        return;
+    }
+
+    // Send an initial buffer
+    iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
+    if (iResult == SOCKET_ERROR) {
+         std::cout << "send failed: " <<  WSAGetLastError() << std::endl;
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return;
+    }
+
+     std::cout << "Bytes Sent: " <<  iResult << std::endl;
+
+    // shutdown the connection since no more data will be sent
+    iResult = shutdown(ConnectSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("shutdown failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return;
+    }
+
+    // Receive until the peer closes the connection
+    do {
+
+        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+        if ( iResult > 0 )
+        {
+            printf("Bytes received: %d\n", iResult);
+
+            std::cout << "Data received: " << recvbuf << std::endl;
+        }
+        else if ( iResult == 0 )
+            printf("Connection closed\n");
+        else
+            printf("recv failed: %d\n", WSAGetLastError());
+
+    } while( iResult > 0 );
+
+    recv(ConnectSocket, recvbuf, recvbuflen, 0);
+    // cleanup
+    closesocket(ConnectSocket);
+    WSACleanup();
 
 }
 
