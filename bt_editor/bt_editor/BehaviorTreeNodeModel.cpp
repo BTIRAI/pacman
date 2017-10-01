@@ -43,18 +43,18 @@ QStringList get_all_files_names_within_folder(std::string folder, std::string ty
 #else
     //OS is unix
 
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (search_path)) != NULL) {
-        /* print all the files and directories within directory */
-        while ((ent = readdir (dir)) != NULL) {
-            names.push_back(QString(ent->d_name));
-        }
-        closedir (dir);
-    } else {
-        /* could not open directory */
-        perror ("");
-    }
+//    DIR *dir;
+//    struct dirent *ent;
+//    if ((dir = opendir (search_path)) != NULL) {
+//        /* print all the files and directories within directory */
+//        while ((ent = readdir (dir)) != NULL) {
+//            names.push_back(QString(ent->d_name));
+//        }
+//        closedir (dir);
+//    } else {
+//        /* could not open directory */
+//        perror ("");
+//    }
 #endif
     return names;
 }
