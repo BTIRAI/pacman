@@ -7,9 +7,15 @@
 #include <iostream>
 #include <fstream>
 #include <mutex>
+
+
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+
 #include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
-
-
+#else
+#include  <Python.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
+#endif
 
 
 std::vector<QtNodes::Node*> findRoots(const QtNodes::FlowScene &scene)
