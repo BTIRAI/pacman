@@ -73,7 +73,7 @@ private:
 
 private slots:
   void onComboBoxUpdated(QString item_text);
-  void onTextBoxUpdated();
+  //void onTextBoxUpdated();
 
 
 signals:

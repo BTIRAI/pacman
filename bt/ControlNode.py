@@ -45,8 +45,8 @@ class ControlNode(TreeNode):
     def GetString(self, string):
         string1 = ""
         for c in self.Children:
-            string1 = str(string1 + '|' + c.GetString(string))
-        return string1 + '|' + str(self.name)
+            string1 = str(string1 + c.GetString(string) + '|')
+        return string1 + str(self.GetStatus())
 
 
     def HaltChildren(self,h):

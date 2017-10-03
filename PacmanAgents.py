@@ -18,6 +18,7 @@ from distanceCalculator import *
 import random
 import game
 import util
+import xml.etree.ElementTree as etree
 
 import sys
 sys.path.insert(0, 'bt/')
@@ -45,6 +46,42 @@ class stru:
         self.Directions = 0
         self.action_executed = 0
         self.distances = 0
+
+
+def getBTNode(root):
+
+    type = root.tag
+
+    
+    if (type is 'Escape'):
+        node = Escape('Escape')
+    elif (type is 'KeepDistance'):
+        node = KeepDistance('KeepDistance')
+    elif (type is 'Search'):
+        node = ClosestDotSearch('Search')
+    elif (type is 'Greedy'):
+        node = Greedy('Greedy')
+    elif (type is 'Chase'):
+        node = Chase('Chase')
+    elif (type is 'IsGhostClose'):
+        node = IsGhostClose('IsGhostClose', 5)
+
+    elif (type is 'IsGhostCloser'):
+        node = IsGhostClose('IsGhostCloser', 2)
+    elif(type is 'IsClosestGhostScared'):
+        node = IsClosestGhostScared('IsClosestGhostScared')
+    else:
+        #is a control node
+        if (type is 'Sequence'):
+            node = SequenceNode('s')
+        else:
+            node = FallbackNode('f')
+        for child in root:
+            node.AddChild(getBTNode(child))
+
+    print('parsing', root.tag)
+    return node
+
 
 
 class BTAgent(Agent):
@@ -105,6 +142,20 @@ class BTAgent(Agent):
 
         #draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
         #draw_thread.start()
+
+
+
+        #parsing the tree from the xml file
+
+        xmlTree = etree.parse('pacmantree.xml')
+        xmlRoot = xmlTree.getroot()
+
+        root = (xmlRoot[0])[0]
+
+
+
+
+
 
         self.bt = sequence_1
 

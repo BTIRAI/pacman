@@ -30,7 +30,7 @@ class IsCloseConditionNodeModel : public BehaviorTreeNodeModel
 {
 public:
     IsCloseConditionNodeModel():
-        BehaviorTreeNodeModel("Is Ghost Close", NodeFactory::get().getActionParameterModel() )
+        BehaviorTreeNodeModel("IsGhostClose", NodeFactory::get().getActionParameterModel() )
     { }
     int BTType()
     {
@@ -45,5 +45,5 @@ public:
     virtual std::unique_ptr<NodeDataModel> clone() const override
     { return  std::unique_ptr<NodeDataModel>( new IsCloseConditionNodeModel ); }
 
-    virtual QString name() const override { return QString("Is Ghost Close"); }
+    virtual QString name() const override { return QString("IsGhostClose"); }
 };

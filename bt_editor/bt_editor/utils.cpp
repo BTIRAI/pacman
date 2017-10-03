@@ -596,8 +596,8 @@ void runTree(QtNodes::FlowScene* scene)
     }
 
     // Receive until the peer closes the connection
-    do {
-
+   // do {
+        while(true){
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
         {
@@ -605,14 +605,13 @@ void runTree(QtNodes::FlowScene* scene)
 
             std::cout << "Data received: " << recvbuf << std::endl;
         }
-        else if ( iResult == 0 )
-            printf("Connection closed\n");
-        else
-            printf("recv failed: %d\n", WSAGetLastError());
+       // else if ( iResult == 0 )
+          //  printf("Connection closed\n");
+        //else
+           // printf("recv failed: %d\n", WSAGetLastError());
 
-    } while( iResult > 0 );
+    }// while( iResult > 0 );
 
-    recv(ConnectSocket, recvbuf, recvbuflen, 0);
     // cleanup
     closesocket(ConnectSocket);
     WSACleanup();

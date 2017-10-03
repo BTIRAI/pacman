@@ -13,6 +13,7 @@ class SequenceNode(ControlNode):
     def __init__(self,name):
         ControlNode.__init__(self,name)
         self.nodeType = 'Sequence'
+        self.accepted = False
 
 
 
@@ -24,21 +25,23 @@ class SequenceNode(ControlNode):
 
 
 
+            if(not self.accepted):
 
-            # Start listening
-            self.s.listen(10)
-            print("Socket Listening")
+                # Start listening
+                self.s.listen(10)
+                print("Socket Listening")
 
-            # Accept connection
-            print("Accepting Connection")
+                # Accept connection
+                print("Accepting Connection")
 
-            conn, addr = self.s.accept()
-            print("Connected to %s:%s" % (addr[0], addr[1]))
+                self.conn, self.addr = self.s.accept()
+                print("Connected to %s:%s" % (self.addr[0], self.addr[1]))
+                self.accepted = True
 
             BUFFER = bytes()
 
             while (True):
-                data = conn.recv(BUFSIZE)
+                data = self.conn.recv(BUFSIZE)
                 if not data: break
                 print(data)
 
@@ -47,7 +50,8 @@ class SequenceNode(ControlNode):
 
 
             print('sending message')
-            conn.sendall(message.encode())
+            message = message + "|END"
+            self.conn.sendall(message.encode('utf-8'))
 
             print('message sent')
         else:

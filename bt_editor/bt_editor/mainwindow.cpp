@@ -432,9 +432,9 @@ void MainWindow::on_selectMode_valueChanged(int value)
        // node->nodeGraphicsObject().update(); // to color ti
       }
 
-      runTree(_main_scene);
-      //std::thread t(&runTree, _main_scene);
-      //t.detach();
+      //runTree(_main_scene);
+      std::thread t(&runTree, _main_scene);
+      t.detach();
 
   }
   else
