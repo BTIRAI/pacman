@@ -194,17 +194,17 @@ void BehaviorTreeNodeModel::restore(std::map<QString,QString> attributes)
 
     std::cout << "restoring: " << std::endl;
     {
-        auto v_type = attributes.find("ID");
+//        auto v_type = attributes.find("ID");
 
-        if (  v_type == attributes.end() )
-        {
-            throw std::runtime_error("the TreeNodeModel needs a [ID] to be restored");
-        }
-        const QString type_name = v_type->second;
+//        if (  v_type == attributes.end() )
+//        {
+//            throw std::runtime_error("the TreeNodeModel needs a [ID] to be restored");
+//        }
+//        const QString type_name = v_type->second;
 
-        _ID_selection_combobox->setCurrentText( type_name );
-        onComboBoxUpdated( type_name );
-        attributes.erase(v_type);
+//        _ID_selection_combobox->setCurrentText( type_name );
+//        onComboBoxUpdated( type_name );
+//        attributes.erase(v_type);
         //--------------------------
         auto v_name = attributes.find("name");
         if (  v_name != attributes.end() )
@@ -213,7 +213,7 @@ void BehaviorTreeNodeModel::restore(std::map<QString,QString> attributes)
             attributes.erase(v_name);
         }
         else{
-            _ID = v_type->second;
+            //_ID = v_type->second;
         }
     }
 

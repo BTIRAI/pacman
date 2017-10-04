@@ -8,6 +8,7 @@
 #include <fstream>
 #include "RootNodeModel.hpp"
 #include "mutex"
+#include <string>
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -497,6 +498,29 @@ int getMode()
     return mode_;
 }
 
+
+
+void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string* return_string)
+{
+
+    std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + " | string: " + *return_string + "\n");
+    std::string  node_color = return_string->substr(0,1);
+    return_string->erase(return_string->begin());
+    //std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + "string: " + node_color + "\n");
+   // std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + "string: " + return_string + "\n");
+    node->set_status(std::stoi(node_color));
+    node->nodeGraphicsObject().update();
+
+    std::vector<QtNodes::Node*> children =  getChildren(*scene, *node);
+
+    for(QtNodes::Node* child : children)
+    {
+        updateBTColors(scene, child, return_string);
+    }
+
+
+}
+
 void runTree(QtNodes::FlowScene* scene)
 {
     qDebug() << "runTree\n";
@@ -528,8 +552,6 @@ void runTree(QtNodes::FlowScene* scene)
 
     std::cout << roots.size() <<" Root found!: " << root->nodeDataModel()->name().toStdString() << std::endl;
 
-     std::cout << "Getting Shit togheter Socket" << std::endl;
-
     WSADATA wsaData;
     int iResult;
 
@@ -539,7 +561,7 @@ void runTree(QtNodes::FlowScene* scene)
     char *sendbuf = "this is a test";
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
-
+    std::string delimiter = "|END";
     //----------------------
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -605,6 +627,10 @@ void runTree(QtNodes::FlowScene* scene)
             printf("Bytes received: %d\n", iResult);
 
             std::cout << "Data received: " << recvbuf << std::endl;
+            std::string parsed_message = recvbuf;
+            std::string token = parsed_message.substr(0, parsed_message.find(delimiter));
+            updateBTColors(scene,root,&token);
+
         }
        // else if ( iResult == 0 )
           //  printf("Connection closed\n");
@@ -618,7 +644,6 @@ void runTree(QtNodes::FlowScene* scene)
     WSACleanup();
 
 }
-
 
 
 

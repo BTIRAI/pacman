@@ -45,6 +45,20 @@ Node::
 }
 
 
+Node::get_status()
+{
+    std::lock_guard<std::mutex> lock(status_mutex_);
+
+    return status_;
+}
+
+Node::set_status(int status)
+{
+    std::lock_guard<std::mutex> lock(status_mutex_);
+
+    status_ = status;
+}
+
 QJsonObject
 Node::
 save() const

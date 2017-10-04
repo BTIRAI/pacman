@@ -8,6 +8,7 @@ from threading import RLock
 NodeState = Enum('NodeState', 'Success Failure Running Idle Halted Exit STATENOTDEFINED')
 NodeClass = Enum('NodeClass', 'Control Leaf CLASSNOTDEFINED')
 NodeType = Enum('NodeType', 'Sequence Fallback Parallel Decorator Action Condition TYPENOTDEFINED')
+
 class TreeNode:
     __metaclass__ = ABCMeta #abstract class
     def __init__(self,name):

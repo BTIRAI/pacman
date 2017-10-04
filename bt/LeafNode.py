@@ -10,6 +10,6 @@ class LeafNode(TreeNode):
         self.nodeClass = 'Leaf'
 
     def GetString(self, string):
-        return str(self.GetStatus())
+        return str(self.GetColor())
 
 

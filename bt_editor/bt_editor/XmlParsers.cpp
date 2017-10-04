@@ -9,7 +9,6 @@
 
 void ParseBehaviorTreeXML(const QDomElement &xml_root, QtNodes::FlowScene* scene, QtNodes::Node& qt_root )
 {
-    std::cout << "HERE 1" << std::endl;
   using namespace QtNodes;
 
   int nested_nodes = 0;

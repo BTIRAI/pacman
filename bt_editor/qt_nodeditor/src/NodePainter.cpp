@@ -33,6 +33,9 @@ paint(QPainter* painter,
 
     NodeState const& state = node.nodeState();
 
+    int status = 0;
+    status = node.get_status();
+
     NodeGraphicsObject const & graphicsObject = node.nodeGraphicsObject();
 
     geom.recalculateSize(painter->font());
@@ -40,7 +43,7 @@ paint(QPainter* painter,
     //--------------------------------------------
     NodeDataModel const * model = node.nodeDataModel();
 
-    drawNodeRect(painter, geom, model, graphicsObject);
+    drawNodeRect(painter, geom, model, graphicsObject, status);
 
     drawConnectionPoints(painter, geom, state, model, scene);
 
@@ -67,7 +70,8 @@ NodePainter::
 drawNodeRect(QPainter* painter,
              NodeGeometry const& geom,
              NodeDataModel const* model,
-             NodeGraphicsObject const & graphicsObject)
+             NodeGraphicsObject const & graphicsObject,
+             int status)
 {
     NodeStyle const& nodeStyle = model->nodeStyle();
 
@@ -76,24 +80,26 @@ drawNodeRect(QPainter* painter,
             : nodeStyle.NormalBoundaryColor;
 
 
-//    if(getMode() == 1)
-//    {
+  //  if(getMode() == 1)
+    {
+        std::cout << status << "!!! \n";
 
-//        switch (bt_node->get_color_status()) {
-//        case BT::RUNNING:
-//            color = Qt::gray;
-//            break;
-//        case BT::SUCCESS:
-//            color = Qt::green;
-//            break;
-//        case BT::FAILURE:
-//            color = Qt::red;
-//            break;
-//        default:
-//            color = Qt::black;
-//            break;
-//        }
-//    }
+
+        switch (status) {
+        case BT::RUNNING:
+            color = Qt::gray;
+            break;
+        case BT::SUCCESS:
+            color = Qt::green;
+            break;
+        case BT::FAILURE:
+            color = Qt::red;
+            break;
+        default:
+            color = Qt::black;
+            break;
+        }
+    }
 
 
     if (geom.hovered())

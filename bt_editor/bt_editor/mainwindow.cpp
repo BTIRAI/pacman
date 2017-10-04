@@ -132,18 +132,18 @@ void MainWindow::loadFromXML(const QString& xml_text)
 
     NodeReorder( *_main_scene );
 
-    for (auto& it: _main_scene->nodes() )
-    {
-        QtNodes::Node* node = it.second.get();
+//    for (auto& it: _main_scene->nodes() )
+//    {
+//        QtNodes::Node* node = it.second.get();
 
-        ActionNodeModel* action_model = dynamic_cast<ActionNodeModel*>( node->nodeDataModel() );
-        if( action_model )
-        {
-            connect( action_model, &ActionNodeModel::adjustSize, this, &MainWindow::onNodeSizeChanged);
-        }
-    }
+//        ActionNodeModel* action_model = dynamic_cast<ActionNodeModel*>( node->nodeDataModel() );
+//        if( action_model )
+//        {
+//            connect( action_model, &ActionNodeModel::adjustSize, this, &MainWindow::onNodeSizeChanged);
+//        }
+//    }
 
-    lockEditing( ui->playButton->isChecked() );
+//    lockEditing( ui->playButton->isChecked() );
 }
 
 
@@ -187,24 +187,7 @@ void MainWindow::recursivelyCreateXml(QDomDocument& doc, QDomElement& parent_ele
     const QtNodes::NodeDataModel* node_model = node->nodeDataModel();
     const QString model_name = node_model->name();
     QDomElement element = doc.createElement( model_name );
-    if( model_name == "Action" || model_name == "Condition")
-    {
-        const BehaviorTreeNodeModel* action_node = dynamic_cast<const BehaviorTreeNodeModel*>(node_model);
-        if( action_node )
-        {
-            element.setAttribute("ID", action_node->type() );
-        }
-        auto parameters = action_node->getCurrentParameters();
-        for(const auto& param: parameters)
-        {
-            element.setAttribute( param.first, param.second );
-        }
-    }
 
-    if( element.attribute("ID") != node_model->caption())
-    {
-        element.setAttribute("name", node_model->caption() );
-    }
     parent_element.appendChild( element );
 
 
@@ -218,7 +201,12 @@ void MainWindow::recursivelyCreateXml(QDomDocument& doc, QDomElement& parent_ele
 
 void MainWindow::on_actionSave_triggered()
 {
+
+    int i = 0;
+
+    qDebug() << "saving "<< i++ << "\n";
     std::vector<QtNodes::Node*> roots = findRoots( *_main_scene );
+    qDebug() << "saving "<< i++ << "\n";
 
     if( roots.empty())
     {
@@ -227,6 +215,7 @@ void MainWindow::on_actionSave_triggered()
                                        QMessageBox::Ok);
         return;
     }
+    qDebug() << "saving "<< i++ << "\n";
 
 
     std::vector<QtNodes::Node*> loose_nodes = findRoots( *_main_scene );
@@ -245,6 +234,7 @@ void MainWindow::on_actionSave_triggered()
             break;
         }
     }
+    qDebug() << "saving "<< i++ << "\n";
 
     if( has_root && getChildren(*_main_scene, *root).empty())
     {
@@ -254,6 +244,7 @@ void MainWindow::on_actionSave_triggered()
         return;
     }
 
+    qDebug() << "saving "<< i++ << "\n";
 
     //----------------------------
     QDomDocument doc;
@@ -262,24 +253,33 @@ void MainWindow::on_actionSave_triggered()
 
     if(has_root)
     {
+        qDebug() << "HAS ROOT\n";
         QDomElement bt_node = doc.createElement( "BehaviorTree" );
         root_element.appendChild(bt_node);
 
         auto root_children = getChildren(*_main_scene, *root );
         if(!root_children.empty())
         {
+            qDebug() << "recursivelyCreateXml\n";
+
             recursivelyCreateXml(doc, bt_node, root_children.front() );
+
+            qDebug() << "recursivelyCreateXmlDONE\n";
+
 
         }
     }
 
-    QDomElement loose_nodes_xml = doc.createElement( "LooseNodes" );
-    root_element.appendChild(loose_nodes_xml);
-    for(QtNodes::Node* loose_node : loose_nodes)
+    if(!loose_nodes.empty())
     {
-        recursivelyCreateXml(doc, loose_nodes_xml, loose_node );
-    }
+        QDomElement loose_nodes_xml = doc.createElement( "LooseNodes" );
+        root_element.appendChild(loose_nodes_xml);
+        for(QtNodes::Node* loose_node : loose_nodes)
+        {
+            recursivelyCreateXml(doc, loose_nodes_xml, loose_node );
+        }
 
+    }
     //-------------------------------------
     QSettings settings("Michele Colledanchise", "BehaviorTreeEditor");
     QString directory_path  = settings.value("MainWindow.lastSaveDirectory",
@@ -291,6 +291,7 @@ void MainWindow::on_actionSave_triggered()
     saveDialog.setNameFilter("XML FILE (*.xml)");
     saveDialog.setDirectory(directory_path);
     saveDialog.exec();
+    qDebug() << "saving "<< i++ << "\n";
 
     QString fileName;
     if(saveDialog.result() == QDialog::Accepted && saveDialog.selectedFiles().size() == 1)
@@ -307,6 +308,7 @@ void MainWindow::on_actionSave_triggered()
         QTextStream stream(&file);
         stream << doc.toString(4) << endl;
     }
+    qDebug() << "saving "<< i++ << "\n";
 
     directory_path = QFileInfo(fileName).absolutePath();
     settings.setValue("MainWindow.lastSaveDirectory", directory_path);

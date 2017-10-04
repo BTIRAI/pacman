@@ -1,31 +1,59 @@
 from ControlNode import ControlNode
 from NodeStatus import *
 import time
+BUFSIZE = 4096
+
 
 class FallbackNode(ControlNode):
 
     def __init__(self,name):
         ControlNode.__init__(self,name)
         self.nodeType = 'Selector'
+        self.accepted = False
+
+
 
 
     def Execute(self,args):
-
         if (self.isRoot):
-            print(self.name + " ROOT")
+            print(self.name + "ROOT")
             message = self.GetString("")
 
-            # Send Data
-            try:
-                self.s.sendall(message.encode())
-            except socket.error:
-                print("Failed to send.")
 
+
+            if(not self.accepted):
+
+                # Start listening
+                self.s.listen(10)
+                print("Socket Listening")
+
+                # Accept connection
+                print("Accepting Connection")
+
+                self.conn, self.addr = self.s.accept()
+                print("Connected to %s:%s" % (self.addr[0], self.addr[1]))
+                self.accepted = True
+
+            BUFFER = bytes()
+
+            while (True):
+                data = self.conn.recv(BUFSIZE)
+                if not data: break
+                print(data)
+
+
+            message = self.GetString('')
+
+
+            print('sending message')
+            message = message + "|END"
+            self.conn.sendall(message.encode('utf-8'))
+
+            print('message sent')
         else:
             print(self.name + "NOT ROOT")
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
-
 
         while self.GetStatus() != NodeStatus.Success and self.GetStatus() != NodeStatus.Failure:
             #check if you have to tick a new child or halt the current

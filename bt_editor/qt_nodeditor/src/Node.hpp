@@ -16,6 +16,8 @@
 #include "NodeGraphicsObject.hpp"
 #include "ConnectionGraphicsObject.hpp"
 #include "Serializable.hpp"
+
+#include "mutex"
 namespace QtNodes
 {
 
@@ -36,6 +38,9 @@ public:
   Node(std::unique_ptr<NodeDataModel> && dataModel);
 
 private:
+  std::mutex status_mutex_;
+  int status_;
+
 public:
   virtual
   ~Node();
@@ -49,6 +54,8 @@ public:
   restore(QJsonObject const &json) override;
 
 public:
+    get_status();
+    set_status(int status);
 
   QUuid
   id() const;

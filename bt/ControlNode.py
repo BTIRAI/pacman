@@ -17,6 +17,7 @@ class ControlNode(TreeNode):
         TreeNode.__init__(self,name)
         self.nodeClass = 'Control'
         self.Children = []
+
         # Create Socket
 
     def CreateSocket(self):
@@ -45,8 +46,8 @@ class ControlNode(TreeNode):
     def GetString(self, string):
         string1 = ""
         for c in self.Children:
-            string1 = str(string1 + c.GetString(string) + '|')
-        return string1 + str(self.GetStatus())
+            string1 = str(string1 + c.GetString(string))
+        return  str(self.GetColor()) + string1
 
 
     def HaltChildren(self,h):

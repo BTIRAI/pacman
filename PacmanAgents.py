@@ -103,14 +103,13 @@ class BTAgent(Agent):
         is_closer = IsGhostClose('IsGhostCloser', 2)
         is_scared = IsClosestGhostScared('IsClosestGhostScared')
 
-
-        fallback_1.AddChild(is_close)
-        fallback_1.AddChild(escape)
-        sequence_1.AddChild(fallback_1)
-        sequence_1.AddChild(greedy)
-
-        sequence_1.isRoot = True
-        sequence_1.CreateSocket()
+        sequence_1.AddChild(is_close)
+        sequence_1.AddChild(escape)
+        fallback_1.AddChild(sequence_1)
+        fallback_1.AddChild(greedy)
+        sequence_2.AddChild(fallback_1)
+        sequence_2.isRoot = True
+        sequence_2.CreateSocket()
 
 
         #
@@ -157,7 +156,7 @@ class BTAgent(Agent):
 
 
 
-        self.bt = sequence_1
+        self.bt = sequence_2
 
     def getAction(self, state):
         self.args.state = state
