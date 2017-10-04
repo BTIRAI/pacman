@@ -38,7 +38,7 @@ class Greedy(ActionNode):
         self.distances = args.distances
         print('Executing Action Greedy')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Failure)
+        self.SetStatus(NodeStatus.Success)
         self.SetColor(NodeColor.Green)
 
 
@@ -76,7 +76,7 @@ class Chase(ActionNode):
         self.distances = args.distances
         print('Executing Action Chase')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Failure)
+        self.SetStatus(NodeStatus.Success)
         self.SetColor(NodeColor.Green)
 
 
@@ -131,7 +131,7 @@ class KeepDistance(ActionNode):
         self.distances = args.distances
         print('Executing Action Escape')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Failure)
+        self.SetStatus(NodeStatus.Success)
         self.SetColor(NodeColor.Green)
 
 
@@ -186,7 +186,7 @@ class Escape(ActionNode):
         self.distances = args.distances
         print('Executing Action Escape')
         args.action_executed.SetAction(self.getAction(args.state))
-        self.SetStatus(NodeStatus.Failure)
+        self.SetStatus(NodeStatus.Success)
         self.SetColor(NodeColor.Green)
 
 
