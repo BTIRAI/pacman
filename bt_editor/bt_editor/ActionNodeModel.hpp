@@ -25,8 +25,6 @@ public:
 //    virtual QString name() const override { return QString("Action"); }
 };
 
-
-
 class EscapeNodeModel : public BehaviorTreeNodeModel
 {
 public:

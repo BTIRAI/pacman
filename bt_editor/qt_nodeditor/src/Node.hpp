@@ -34,9 +34,8 @@ public:
 
   /// NodeDataModel should be an rvalue and is moved into the Node
   Node(std::unique_ptr<NodeDataModel> && dataModel);
-private:
-  QColor _color;
 
+private:
 public:
   virtual
   ~Node();
@@ -86,9 +85,6 @@ public:
 
   NodeDataModel*
   nodeDataModel() const;
-
-  QColor color() const;
-  void setColor(const QColor &color);
 
 public slots: // data propagation
 

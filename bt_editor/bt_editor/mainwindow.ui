@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Behavior Tree</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -32,45 +32,24 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="labelEdit">
-          <property name="text">
-           <string>Edit</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="selectMode">
-          <property name="minimumSize">
-           <size>
-            <width>26</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>26</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="maximum">
-           <number>1</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelMonitor">
-          <property name="text">
-           <string>Run</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="playButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../qt_nodeditor/resources/resources.qrc">
+            <normaloff>:/play.png</normaloff>
+            <normalon>:/stop.png</normalon>:/play.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -114,7 +93,6 @@
      <string>File</string>
     </property>
     <addaction name="actionLoad"/>
-    <addaction name="actionLoadRosparam"/>
     <addaction name="actionSave"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -202,7 +180,10 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../qt_nodeditor/resources/resources.qrc"/>
+  <include location="../qt_nodeditor/resources/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionQuit</sender>

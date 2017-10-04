@@ -14,9 +14,6 @@
 #include "FlowScene.hpp"
 #include "bt_editor/utils.h"
 
-
-
-
 using QtNodes::NodePainter;
 using QtNodes::NodeGeometry;
 using QtNodes::NodeGraphicsObject;
@@ -43,7 +40,7 @@ paint(QPainter* painter,
     //--------------------------------------------
     NodeDataModel const * model = node.nodeDataModel();
 
-    drawNodeRect(painter, geom, model, graphicsObject, node);
+    drawNodeRect(painter, geom, model, graphicsObject);
 
     drawConnectionPoints(painter, geom, state, model, scene);
 
@@ -70,8 +67,7 @@ NodePainter::
 drawNodeRect(QPainter* painter,
              NodeGeometry const& geom,
              NodeDataModel const* model,
-             NodeGraphicsObject const & graphicsObject,
-             Node & node)
+             NodeGraphicsObject const & graphicsObject)
 {
     NodeStyle const& nodeStyle = model->nodeStyle();
 
@@ -80,19 +76,24 @@ drawNodeRect(QPainter* painter,
             : nodeStyle.NormalBoundaryColor;
 
 
+//    if(getMode() == 1)
+//    {
 
-
-
-
-
-   // node.setColor(Qt::red);
-
-    if(getMode() == 1)
-    {
-        //COLOR HERE
-        color = node.color();
-        //_node._color = Qt::red;
-    }
+//        switch (bt_node->get_color_status()) {
+//        case BT::RUNNING:
+//            color = Qt::gray;
+//            break;
+//        case BT::SUCCESS:
+//            color = Qt::green;
+//            break;
+//        case BT::FAILURE:
+//            color = Qt::red;
+//            break;
+//        default:
+//            color = Qt::black;
+//            break;
+//        }
+//    }
 
 
     if (geom.hovered())

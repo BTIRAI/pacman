@@ -53,6 +53,7 @@ public:
   registerModel(std::unique_ptr<ModelType> uniqueModel = std::make_unique<ModelType>(),
                 QString const &category = "Nodes")
   {
+
     static_assert(std::is_base_of<NodeDataModel, ModelType>::value,
                   "Must pass a subclass of NodeDataModel to registerModel");
 

@@ -6,8 +6,8 @@
 #include <bt_editor/BehaviorTreeNodeModel.hpp>
 #include <iostream>
 #include <fstream>
-#include <mutex>
-
+#include "RootNodeModel.hpp"
+#include "mutex"
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -30,9 +30,6 @@
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
-
-
-
 
 
 std::vector<QtNodes::Node*> findRoots(const QtNodes::FlowScene &scene)
@@ -482,11 +479,14 @@ void SubtreeReorder(QtNodes::FlowScene &scene, QtNodes::Node &root_node)
 }
 
 
+
+
 std::mutex mode_mutex;
 int mode_;
 
 void setMode(int mode)
 {
+    std::cout << "Setting mode: " << mode << std::endl;
      std::lock_guard<std::mutex> lock(mode_mutex);
     mode_ = mode;
 }
@@ -499,6 +499,7 @@ int getMode()
 
 void runTree(QtNodes::FlowScene* scene)
 {
+    qDebug() << "runTree\n";
 
 //    std::cout << "Initializing" << std::endl;
 
@@ -562,7 +563,7 @@ void runTree(QtNodes::FlowScene* scene)
     // IP address, and port of the server to be connected to.
     clientService.sin_family = AF_INET;
     clientService.sin_addr.s_addr = inet_addr( "127.0.0.1" );
-    clientService.sin_port = htons( 8934 );
+    clientService.sin_port = htons( 8935 );
 
 
     //----------------------
@@ -623,3 +624,37 @@ void runTree(QtNodes::FlowScene* scene)
 
 
 
+
+
+
+bool is_BT_valid(QtNodes::FlowScene* scene)
+{
+
+    std::vector<QtNodes::Node*> roots = findRoots( *scene );
+    bool valid_root = false;
+
+
+    for(int i = 0; i < roots.size(); i++)
+
+    {
+       valid_root = valid_root || dynamic_cast<RootNodeModel*>(roots.front()->nodeDataModel());
+    }
+
+//    bool valid_root = (roots.size() == 1) && ( dynamic_cast<RootNodeModel*>(roots.front()->nodeDataModel() ));
+
+//    QtNodes::Node* current_node = nullptr;
+
+//    if( valid_root ){
+//      auto root_children = getChildren(*scene, *roots.front() );
+//      if( root_children.size() == 1){
+//        current_node = root_children.front();
+//      }
+//      else{
+//        valid_root = false;
+//      }
+//    }
+
+    return valid_root ;
+
+
+}

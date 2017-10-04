@@ -42,7 +42,7 @@ public:
 
   int BTType()
   {
-      return BT::DECORATOR;
+      return BT::ROOT;
   }
 
   QString get_line_edit()
@@ -50,12 +50,9 @@ public:
     return QString("ROOT");
   }
 
+
   std::unique_ptr<NodeDataModel> clone() const override
   { return  std::unique_ptr<NodeDataModel>( new RootNodeModel ); }
-
-
-
-
 
   QString caption() const override { return QString("Root"); }
 

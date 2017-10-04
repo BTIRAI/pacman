@@ -26,10 +26,10 @@ public:
 
 
 
-class IsCloseConditionNodeModel : public BehaviorTreeNodeModel
+class IsGhostCloseConditionNodeModel : public BehaviorTreeNodeModel
 {
 public:
-    IsCloseConditionNodeModel():
+    IsGhostCloseConditionNodeModel():
         BehaviorTreeNodeModel("IsGhostClose", NodeFactory::get().getActionParameterModel() )
     { }
     int BTType()
@@ -37,13 +37,13 @@ public:
         return BT::CONDITION;
     }
 
-    virtual ~IsCloseConditionNodeModel() {}
+    virtual ~IsGhostCloseConditionNodeModel() {}
 
     virtual unsigned int  nPorts(PortType portType) const override
     { return (portType==PortType::In) ? 1:0; }
 
     virtual std::unique_ptr<NodeDataModel> clone() const override
-    { return  std::unique_ptr<NodeDataModel>( new IsCloseConditionNodeModel ); }
+    { return  std::unique_ptr<NodeDataModel>( new IsGhostCloseConditionNodeModel ); }
 
     virtual QString name() const override { return QString("IsGhostClose"); }
 };

@@ -6,6 +6,8 @@
 #include <functional>
 #include <QDomDocument>
 
+
+
 class NodeFactory
 {
     NodeFactory() {}

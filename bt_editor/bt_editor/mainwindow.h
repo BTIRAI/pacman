@@ -10,10 +10,6 @@
 #include <thread>
 #include <mutex>
 
-#ifdef USING_ROS
-#include <ros/ros.h>
-#include <std_msgs/String.h>
-#endif
 namespace Ui {
 class MainWindow;
 }
@@ -57,14 +53,13 @@ private slots:
 
     void onTimerUpdate();
 
-
-#ifdef USING_ROS
-    void on_actionLoadRosparam_triggered();
-#endif
-
     void on_actionAdd_Action_triggered();
 
     void on_actionAdd_Condition_triggered();
+
+    void on_selectMode_sliderReleased();
+
+    void on_playButton_released();
 
 signals:
     void updateGraphic();
@@ -95,12 +90,6 @@ private:
     QString _state_msg;
     QtNodes::Node* _root_node;
 
-
-#ifdef USING_ROS
-    ros::Subscriber _state_subscriber;
-    ros::NodeHandle _node_handle;
-    void callbackState(const std_msgs::String::ConstPtr& msg);
-#endif
 };
 
 #endif // MAINWINDOW_H

@@ -43,18 +43,18 @@ QStringList get_all_files_names_within_folder(std::string folder, std::string ty
 #else
     //OS is unix
 
-//    DIR *dir;
-//    struct dirent *ent;
-//    if ((dir = opendir (search_path)) != NULL) {
-//        /* print all the files and directories within directory */
-//        while ((ent = readdir (dir)) != NULL) {
-//            names.push_back(QString(ent->d_name));
-//        }
-//        closedir (dir);
-//    } else {
-//        /* could not open directory */
-//        perror ("");
-//    }
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir (search_path)) != NULL) {
+        /* print all the files and directories within directory */
+        while ((ent = readdir (dir)) != NULL) {
+            names.push_back(QString(ent->d_name));
+        }
+        closedir (dir);
+    } else {
+        /* could not open directory */
+        perror ("");
+    }
 #endif
     return names;
 }
@@ -68,40 +68,38 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
 
 
     _main_widget = new QWidget;
-    _label = new QLabel( _main_widget );
-    //_ID_selection_combobox = new QComboBox(_main_widget);
-    std::cout << "combobox created" << std::endl;
-    _label->setText( name );
+        _label = new QLabel( _main_widget );
+        //_ID_selection_combobox = new QComboBox(_main_widget);
+        std::cout << "combobox created" << std::endl;
+        _label->setText( name );
 
-    QVBoxLayout *main_layout = new QVBoxLayout( _main_widget );
-    QHBoxLayout *top_layout  = new QHBoxLayout(  );
-    //_line_edit = new QLineEdit(_main_widget);
-    //_text_edit = new QTextEdit (_main_widget);
+        QVBoxLayout *main_layout = new QVBoxLayout( _main_widget );
+        QHBoxLayout *top_layout  = new QHBoxLayout(  );
+        //_line_edit = new QLineEdit(_main_widget);
+        //_text_edit = new QTextEdit (_main_widget);
 
-    //_text_edit->setTextColor(Qt::black);
-    //_ID_selection_combobox->setStyleSheet("color: black; background-color: white");
-
-
-    //_line_edit->setStyleSheet("background-color: white");
-
-    _params_widget = new QWidget( _main_widget );
-    _form_layout = new QFormLayout( _params_widget );
-
-    top_layout->addWidget( _label );
-    //top_layout->addWidget( _ID_selection_combobox );
-
-    main_layout->addLayout(top_layout);
-    //main_layout->addWidget(_params_widget);
-    //main_layout->addWidget(_line_edit);
-    //main_layout->addWidget(_text_edit);
-
-    //QStringList combo_items = get_all_files_names_within_folder(".", name.toStdString());
+        //_text_edit->setTextColor(Qt::black);
+        //_ID_selection_combobox->setStyleSheet("color: black; background-color: white");
 
 
+        //_line_edit->setStyleSheet("background-color: white");
 
-    //_ID_selection_combobox->addItems(combo_items);
-    std::cout << "combobox items added" << std::endl;
+        _params_widget = new QWidget( _main_widget );
+        _form_layout = new QFormLayout( _params_widget );
 
+        top_layout->addWidget( _label );
+        //top_layout->addWidget( _ID_selection_combobox );
+
+        main_layout->addLayout(top_layout);
+        //main_layout->addWidget(_params_widget);
+        //main_layout->addWidget(_line_edit);
+        //main_layout->addWidget(_text_edit);
+
+        //QStringList combo_items = get_all_files_names_within_folder(".", name.toStdString());
+
+
+
+        //_ID_selection_combobox->addItems(combo_items);
     QFont font = _label->font();
     font.setPointSize(10);
     font.setBold(true);
@@ -122,14 +120,7 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
     main_layout->setMargin(0);
     _main_widget->setStyleSheet("background-color: transparent; color: white; ");
 
-//    if(!combo_items.empty())
-//    {
-//        onComboBoxUpdated(combo_items[0]);
-//    }
 
-
-//    connect(_ID_selection_combobox, SIGNAL(currentIndexChanged(QString)),
-//            this, SLOT(onComboBoxUpdated(QString)) );
 }
 
 QString BehaviorTreeNodeModel::caption() const {
@@ -138,10 +129,27 @@ QString BehaviorTreeNodeModel::caption() const {
 
 QString BehaviorTreeNodeModel::type() const
 {
-    return QString("");
+    return _ID_selection_combobox->currentText();
+}
+
+QString BehaviorTreeNodeModel::get_line_edit()
+{
+    return _line_edit->text();
 }
 
 
+QString BehaviorTreeNodeModel::get_text_edit()
+{
+    return _text_edit->toPlainText();
+}
+
+void BehaviorTreeNodeModel::lastComboItem() const
+{
+    // TODO DO IT!
+    std::cout << "Setting combobox item" << std::endl;
+    // ID_selection_combobox->isEnabled();
+    std::cout << "combobox item SET" << std::endl;
+}
 
 
 std::vector<std::pair<QString, QString>> BehaviorTreeNodeModel::getCurrentParameters() const
@@ -184,6 +192,7 @@ void BehaviorTreeNodeModel::restore(std::map<QString,QString> attributes)
     // we expect to find at least two attributes, "name" and "ID".
     // Other nodes represent parameters.
 
+    std::cout << "restoring: " << std::endl;
     {
         auto v_type = attributes.find("ID");
 
@@ -193,6 +202,8 @@ void BehaviorTreeNodeModel::restore(std::map<QString,QString> attributes)
         }
         const QString type_name = v_type->second;
 
+        _ID_selection_combobox->setCurrentText( type_name );
+        onComboBoxUpdated( type_name );
         attributes.erase(v_type);
         //--------------------------
         auto v_name = attributes.find("name");
@@ -264,7 +275,8 @@ void BehaviorTreeNodeModel::restore(const QJsonObject &nodeJson)
 
 void BehaviorTreeNodeModel::lock(bool locked)
 {
-    //_text_edit->setEnabled(!locked);
+    _ID_selection_combobox->setEnabled( !locked );
+    _text_edit->setEnabled(!locked);
 
 //    for(int row = 0; row < _form_layout->rowCount(); row++)
 //    {
@@ -316,7 +328,6 @@ void BehaviorTreeNodeModel::lock(bool locked)
 
 void BehaviorTreeNodeModel::onComboBoxUpdated(QString item_text)
 {
-    return;
     std::ifstream file(item_text.toStdString());
     std::string str;
     std::string file_contents;
@@ -325,7 +336,21 @@ void BehaviorTreeNodeModel::onComboBoxUpdated(QString item_text)
         file_contents += str;
         file_contents.push_back('\n');
     }
+    _text_edit->setText(file_contents.c_str());
 }
 
+void BehaviorTreeNodeModel::onTextBoxUpdated()
+{
+//    std::cout << "not saving file, edit BehaviorTreeNodeModel::onTextBoxUpdated" << std::endl;
+
+//    return;
+
+    std::ofstream myfile;
+    myfile.open (_ID_selection_combobox->currentText().toStdString().c_str());
+    myfile << _text_edit->toPlainText().toStdString().c_str();
+    myfile.close();
+
+    std::cout << "new data added" << std::endl;
+}
 
 

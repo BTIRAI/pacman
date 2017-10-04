@@ -12,10 +12,6 @@
 
 #include <node_editor/DataModelRegistry>
 
-#ifdef USING_ROS
-#include <ros/ros.h>
-#endif
-
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowViewStyle;
 using QtNodes::NodeStyle;
@@ -24,9 +20,6 @@ using QtNodes::ConnectionStyle;
 int
 main(int argc, char *argv[])
 {
-#ifdef USING_ROS
-  ros::init(argc, argv, "behavior_tree_editor" );
-#endif
 
   QApplication app(argc, argv);
 

@@ -31,36 +31,25 @@ Node(std::unique_ptr<NodeDataModel> && dataModel)
   , _nodeGraphicsObject(nullptr)
 {
   _nodeGeometry.recalculateSize();
-  _color = Qt::gray;
+
   // propagate data: model => node
   connect(_nodeDataModel.get(), &NodeDataModel::dataUpdated,
           this, &Node::onDataUpdated);
 }
 
-QColor Node::color() const
-{
-    return _color;
-}
-
-void Node::setColor(const QColor &color)
-{
-    _color = color;
-}
 
 Node::
 ~Node()
 {
-    std::cout << "Node destructor" << std::endl;
+  std::cout << "Node destructor" << std::endl;
 }
-
-
 
 
 QJsonObject
 Node::
 save() const
 {
-    QJsonObject nodeJson;
+  QJsonObject nodeJson;
 
   nodeJson["id"] = _id.toString();
 

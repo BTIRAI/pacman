@@ -16,6 +16,11 @@ public:
 
     virtual ~SubtreeNodeModel() {}
 
+    int BTType()
+    {
+        return BT::SUBTREE;
+    }
+
     virtual unsigned int  nPorts(PortType portType) const override
     { return (portType==PortType::In) ? 1:0; }
 

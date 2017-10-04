@@ -22,31 +22,10 @@ find_package( Threads )
 
 
 
-#############################################################
-# http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
-if( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
-    set(catkin_FOUND 1)
-    add_definitions( -DUSING_ROS )
-endif()
-
-if(catkin_FOUND)
-  find_package(catkin REQUIRED COMPONENTS behavior_tree_cpp rosbag rosbag_storage roscpp)
-
-  message(STATUS "------------------------------------------------")
-  message(STATUS "BehaviourTreeEditor is being built using CATKIN.")
-  message(STATUS "------------------------------------------------")
-
-  catkin_package(
-    INCLUDE_DIRS 
-    LIBRARIES qt_node_editor
-    CATKIN_DEPENDS behavior_tree_cpp
-    DEPENDS 
-    )
-endif(catkin_FOUND)
-#############################################################
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions(${Qt5Widgets_DEFINITIONS} -DNODE_EDITOR_STATIC -std=c++11)
@@ -57,17 +36,8 @@ INCLUDE_DIRECTORIES( ${catkin_INCLUDE_DIRS} ./qt_nodeditor/include )
 
 
 
-#########################################################
-# FIND Lua
-#########################################################
-find_package(Lua REQUIRED)
-MESSAGE(STATUS "LUA_DIR:" ${LUA_LIBRARIES})
-INCLUDE_DIRECTORIES(${LUA_INCLUDE_DIR})
 
 
-
-
-#INCLUDE_DIRECTORIES(${LUA_DIR}/include/)
 
 file(GLOB_RECURSE LIB_CPPS  ./qt_nodeditor/src/*.cpp )
 file(GLOB_RECURSE APP_CPPS  ./bt_editor/*.cpp )
@@ -87,10 +57,8 @@ QT5_WRAP_UI(FORMS_HEADERS
   ./bt_editor/action_form.ui
   ./bt_editor/condition_form.ui)
 
-message("the value of BTSrcLibrary  EDITOR: " ${BTSrcLibrary})
-message("the value of BTSrcLibrary  EDITOR: " ${BTHeadLibrary})
 
 
-add_executable(behavior_tree_editor ${APP_CPPS} ${FORMS_HEADERS})
+add_executable(behavior_tree_editor ${APP_CPPS} ${FORMS_HEADERS} )
 target_link_libraries(behavior_tree_editor qt_node_editor
-    ${catkin_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lws2_32 )
+    ${catkin_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lws2_32)

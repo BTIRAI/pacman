@@ -709,8 +709,9 @@ def runGamesWithMenu( layout, pacman, ghosts, display, numGames, record, numTrai
         # Con la opcion --frameTime -1, se puede hacer por frames
         
         # Activamos mostrar la pantalla de entrenamiento durante el mismo
-        display.showTrainingScreen = True
-        
+        #display.showTrainingScreen = True
+        display.showTrainingScreen = False
+
         # Iniciamos la ventana
         display.make_window(layout.width, layout.height)
         
@@ -862,6 +863,7 @@ if __name__ == '__main__':
     
     if args['gameMenu']:
         args.pop('gameMenu')
+        print("Running with menu")
         runGamesWithMenu( **args )
     else:
         args.pop('gameMenu')

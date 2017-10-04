@@ -25,4 +25,7 @@ void setMode(int mode);
 
 int getMode();
 
+bool is_BT_valid(QtNodes::FlowScene* scene);
+
+
 #endif // NODE_UTILS_H

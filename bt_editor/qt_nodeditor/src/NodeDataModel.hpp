@@ -15,9 +15,10 @@
 #include "Export.hpp"
 
 namespace BT {
-enum DrawNodeType {PARALLEL, SELECTOR, SEQUENCE, SEQUENCESTAR, SELECTORSTAR, ACTION, CONDITION,DECORATOR};
-
+enum ReturnStatus {RUNNING, SUCCESS, FAILURE, IDLE, HALTED, EXIT};
+enum DrawNodeType {PARALLEL, SELECTOR, SEQUENCE, SEQUENCESTAR, SELECTORSTAR, ACTION, CONDITION,DECORATOR, ROOT, SUBTREE};
 }
+
 
 namespace QtNodes
 {
@@ -76,7 +77,11 @@ public:
 
   QJsonObject
   save() const override;
+  virtual int
+  BTType() = 0;
 
+  virtual
+  QString get_line_edit() = 0;
 
 
 public:

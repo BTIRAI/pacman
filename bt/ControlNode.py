@@ -7,7 +7,7 @@ import socket
 import sys
 
 HOST = '127.0.0.1'
-PORT = 8934
+PORT = 8935
 ADDR = (HOST, PORT)
 
 class ControlNode(TreeNode):

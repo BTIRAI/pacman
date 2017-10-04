@@ -27,9 +27,15 @@ public:
         _label = new QLabel( _main_widget );
         _name_edit = new QLineEdit( _main_widget );
 
-        QVBoxLayout *layout = new QVBoxLayout( _main_widget );
+        _name_edit->setFixedWidth(50);
+
+
+        QHBoxLayout *layout = new QHBoxLayout( _main_widget );
         layout->addWidget( _label );
         layout->addWidget( _name_edit );
+
+
+
 
         QFont font = _label->font();
         font.setPointSize(10);
@@ -157,7 +163,7 @@ public:
         return BT::SELECTOR;
     }
     virtual ~SelectorModel() {}
-    static QString staticName() { return QString("Selector"); }
+    static QString staticName() { return QString("Fallback"); }
 };
 
 

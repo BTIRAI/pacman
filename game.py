@@ -573,7 +573,7 @@ class Game:
         """
         Main control loop for game play.
         """
-        self.display.initialize(self.state.data)
+        #self.display.initialize(self.state.data) ## UNCOMMENT HERE TO DISPLAY
         self.numMoves = 0
 
         ###self.display.initialize(self.state.makeObservation(1).data)

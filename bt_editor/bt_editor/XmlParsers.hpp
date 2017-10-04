@@ -9,6 +9,7 @@
 
 void ParseBehaviorTreeXML(const QDomElement &xml_root , QtNodes::FlowScene* scene, QtNodes::Node& qt_root);
 
+void ParseLooseNodesXML(const QDomElement &xml_root, QtNodes::FlowScene* scene, QtNodes::Node& qt_root );
 
 class StateUpdateXmlHandler :public QXmlDefaultHandler, public QObject
 {
