@@ -20,10 +20,7 @@ class SequenceNode(ControlNode):
 
     def Execute(self,args):
         if (self.isRoot):
-            print(self.name + "ROOT")
             message = self.GetString("")
-
-
 
             if(not self.accepted):
 
@@ -54,8 +51,7 @@ class SequenceNode(ControlNode):
             self.conn.sendall(message.encode('utf-8'))
 
             print('message sent')
-        else:
-            print(self.name + "NOT ROOT")
+
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 

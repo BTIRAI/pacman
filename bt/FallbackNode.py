@@ -17,7 +17,6 @@ class FallbackNode(ControlNode):
     def Execute(self,args):
         time.sleep(1)
         if (self.isRoot):
-            print(self.name + "ROOT")
             message = self.GetString("")
 
 
@@ -51,8 +50,6 @@ class FallbackNode(ControlNode):
             self.conn.sendall(message.encode('utf-8'))
 
             print('message sent')
-        else:
-            print(self.name + "NOT ROOT")
         #print 'Starting Children Threads'
         self.SetStatus(NodeStatus.Idle)
 

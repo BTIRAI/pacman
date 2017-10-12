@@ -197,6 +197,8 @@ class Escape(ActionNode):
         legal = state.getLegalPacmanActions()
         if self.Directions.STOP in legal: legal.remove(self.Directions.STOP)
 
+
+
         successors = [(state.generateSuccessor(0, action), action) for action in legal]
         scored = [(self.closestDistance(state), action) for state, action in successors]
 

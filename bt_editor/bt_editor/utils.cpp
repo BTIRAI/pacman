@@ -525,11 +525,11 @@ void runTree(QtNodes::FlowScene* scene)
 {
     qDebug() << "runTree\n";
 
-//    std::cout << "Initializing" << std::endl;
+    std::cout << "Initializing" << std::endl;
 
-//    Py_Initialize();
+    Py_Initialize();
 
-//    std::cout << "Init done" << std::endl;
+    std::cout << "Init done" << std::endl;
 
 
 //    PyRun_SimpleString("import sys");

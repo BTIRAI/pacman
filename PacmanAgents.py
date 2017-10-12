@@ -18,7 +18,7 @@ from distanceCalculator import *
 import random
 import game
 import util
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree as ET
 
 import sys
 sys.path.insert(0, 'bt/')
@@ -28,6 +28,7 @@ from FallbackNode import FallbackNode
 from PacmanActionNodes import *
 from PacmanConditionNodes import *
 from BehaviorTree import *
+
 
 from ConditionRandom import ConditionRandom
 
@@ -53,82 +54,43 @@ def getBTNode(root):
     type = root.tag
 
     
-    if (type is 'Escape'):
+    if (type == 'Escape'):
         node = Escape('Escape')
-    elif (type is 'KeepDistance'):
+        print('Create Escape')
+    elif (type == 'KeepDistance'):
         node = KeepDistance('KeepDistance')
-    elif (type is 'Search'):
+    elif (type == 'Search'):
         node = ClosestDotSearch('Search')
-    elif (type is 'Greedy'):
+    elif (type == 'Greedy'):
         node = Greedy('Greedy')
-    elif (type is 'Chase'):
+    elif (type == 'Chase'):
         node = Chase('Chase')
-    elif (type is 'IsGhostClose'):
+    elif (type == 'IsGhostClose'):
+        print('Create IsGhostClose')
         node = IsGhostClose('IsGhostClose', 5)
 
-    elif (type is 'IsGhostCloser'):
+    elif (type == 'IsGhostCloser'):
         node = IsGhostClose('IsGhostCloser', 2)
-    elif(type is 'IsClosestGhostScared'):
+    elif(type == 'IsClosestGhostScared'):
         node = IsClosestGhostScared('IsClosestGhostScared')
     else:
         #is a control node
-        if (type is 'Sequence'):
-            node = SequenceNode('s')
+        if (type == 'Sequence'):
+            node = SequenceNode('sequence')
+            print('Create Sequence')
+
         else:
-            node = FallbackNode('f')
+            node = FallbackNode('fallback')
         for child in root:
             node.AddChild(getBTNode(child))
 
-    print('parsing', root.tag)
+    print('parsing', type)
     return node
 
 
 
 class BTAgent(Agent):
     def __init__(self):
-
-        fallback_1 = FallbackNode('f1')
-        sequence_1 = SequenceNode('s1')
-        sequence_2 = SequenceNode('s2')
-        sequence_3 = SequenceNode('s3')
-
-        escape = Escape('Escape')
-        keep_distance = KeepDistance('KeepDistance')
-        search = ClosestDotSearch('Search')
-        greedy = Greedy('Greedy')
-        chase = Chase('Chase')
-
-
-        is_close = IsGhostClose('IsGhostClose', 5)
-        is_closer = IsGhostClose('IsGhostCloser', 2)
-        is_scared = IsClosestGhostScared('IsClosestGhostScared')
-
-        sequence_1.AddChild(is_close)
-        sequence_1.AddChild(escape)
-        fallback_1.AddChild(sequence_1)
-        fallback_1.AddChild(greedy)
-        sequence_2.AddChild(fallback_1)
-        sequence_2.isRoot = True
-        sequence_2.CreateSocket()
-
-
-        #
-        # sequence_1.AddChild(is_closer)
-        # sequence_1.AddChild(escape)
-        #
-        # sequence_2.AddChild(is_scared)
-        # sequence_2.AddChild(chase)
-        #
-        # sequence_3.AddChild(is_close)
-        # sequence_3.AddChild(escape)
-        #
-        # fallback_1.AddChild(sequence_1)
-        # fallback_1.AddChild(sequence_2)
-        # fallback_1.AddChild(sequence_3)
-        #
-        # fallback_1.AddChild(search)
-        # fallback_1.AddChild(greedy)
-
 
         self.args = stru()
         self.action_executed = ActionExecuted()
@@ -137,26 +99,20 @@ class BTAgent(Agent):
         self.args.Directions = Directions
         self.args.action_executed = self.action_executed
 
-        #thread.start_new_thread(draw_tree, (fallback_1,))
-
-        #draw_thread = threading.Thread(target=new_draw_tree, args=(fallback_1,))
-        #draw_thread.start()
-
 
 
         #parsing the tree from the xml file
 
-        xmlTree = etree.parse('pacmantree.xml')
+        xmlTree = ET.parse('pacmantree.xml')
         xmlRoot = xmlTree.getroot()
 
         root = (xmlRoot[0])[0]
 
+        bt_root = getBTNode(root)
 
 
-
-
-
-        self.bt = sequence_2
+        print(bt_root.GetString(""))
+        self.bt = bt_root
 
     def getAction(self, state):
         self.args.state = state
