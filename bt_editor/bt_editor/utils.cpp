@@ -11,12 +11,12 @@
 #include <string>
 
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+//#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
-#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
-#else
-#include  <Python.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
-#endif
+//#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
+//#else
+//#include  <Python.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
+//#endif
 
 
 #define WIN32_LEAN_AND_MEAN
@@ -502,12 +502,11 @@ int getMode()
 
 void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string* return_string)
 {
+    std::cout << "Coloring: " << node->nodeDataModel()->name().toStdString() << std::endl;
 
-    std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + " | string: " + *return_string + "\n");
+   std::cout << "string: " << *return_string << std::endl;
     std::string  node_color = return_string->substr(0,1);
     return_string->erase(return_string->begin());
-    //std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + "string: " + node_color + "\n");
-   // std::cout << ("Coloring: " + node->nodeDataModel()->name().toStdString() + "string: " + return_string + "\n");
     node->set_status(std::stoi(node_color));
     node->nodeGraphicsObject().update();
 
@@ -518,6 +517,7 @@ void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string*
         updateBTColors(scene, child, return_string);
     }
 
+    std::cout << "Coloring DONE for: " << node->nodeDataModel()->name().toStdString() << std::endl;
 
 }
 
@@ -527,7 +527,7 @@ void runTree(QtNodes::FlowScene* scene)
 
     std::cout << "Initializing" << std::endl;
 
-    Py_Initialize();
+//    Py_Initialize();
 
     std::cout << "Init done" << std::endl;
 

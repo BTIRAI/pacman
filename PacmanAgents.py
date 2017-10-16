@@ -59,18 +59,18 @@ def getBTNode(root):
         print('Create Escape')
     elif (type == 'KeepDistance'):
         node = KeepDistance('KeepDistance')
-    elif (type == 'Search'):
-        node = ClosestDotSearch('Search')
+    elif (type == 'MoveToClosestDot'):
+        node = ClosestDotSearch('MoveToClosestDot')
     elif (type == 'Greedy'):
+        print('Create Greedy')
         node = Greedy('Greedy')
     elif (type == 'Chase'):
         node = Chase('Chase')
     elif (type == 'IsGhostClose'):
         print('Create IsGhostClose')
         node = IsGhostClose('IsGhostClose', 5)
-
-    elif (type == 'IsGhostCloser'):
-        node = IsGhostClose('IsGhostCloser', 2)
+    elif (type == 'IsGhostVeryCloser'):
+        node = IsGhostClose('IsGhostVeryCloser', 2)
     elif(type == 'IsClosestGhostScared'):
         node = IsClosestGhostScared('IsClosestGhostScared')
     else:
@@ -81,6 +81,8 @@ def getBTNode(root):
 
         else:
             node = FallbackNode('fallback')
+            print('Create Fallback')
+
         for child in root:
             node.AddChild(getBTNode(child))
 
@@ -106,13 +108,41 @@ class BTAgent(Agent):
         xmlTree = ET.parse('pacmantree.xml')
         xmlRoot = xmlTree.getroot()
 
+        fallback_1 = FallbackNode('f1')
+        sequence_1 = SequenceNode('s1')
+        sequence_2 = SequenceNode('s2')
+        sequence_3 = SequenceNode('s3')
+
+        escape = Escape('Escape')
+        keep_distance = KeepDistance('KeepDistance')
+        search = ClosestDotSearch('Search')
+        greedy = Greedy('Greedy')
+        chase = Chase('Chase')
+
+
+        is_close = IsGhostClose('IsGhostClose', 5)
+        is_closer = IsGhostClose('IsGhostCloser', 2)
+        is_scared = IsClosestGhostScared('IsClosestGhostScared')
+
+        sequence_1.AddChild(is_close)
+        sequence_1.AddChild(escape)
+        fallback_1.AddChild(sequence_1)
+        fallback_1.AddChild(greedy)
+
+
+
         root = (xmlRoot[0])[0]
 
-        bt_root = getBTNode(root)
+        xml_root = getBTNode(root)
 
+        bt_root = SequenceNode("DUMMY")
+        bt_root.AddChild(xml_root)
+        bt_root.isRoot = True
+        bt_root.CreateSocket()
 
         print(bt_root.GetString(""))
         self.bt = bt_root
+
 
     def getAction(self, state):
         self.args.state = state

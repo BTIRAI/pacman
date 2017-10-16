@@ -19,7 +19,7 @@ class ActionTest(ActionNode):
             #print self.name + ' executing'
             time.sleep(10)
 
-        self.SetStatus(NodeStatus.Failure)
+        self.SetStatus(NodeStatus.Success)
         self.SetColor(NodeColor.Green)
 
 
@@ -92,8 +92,8 @@ class Chase(ActionNode):
         bestScore = min(scored)[0] #get to the one with the minumim distance
         bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
         actionperformed = random.choice(bestActions)
-        print ('successors', successors)
-        print ('scored', scored)
+        # print ('successors', successors)
+        # print ('scored', scored)
         print ('actionperformed',actionperformed)
         #input("Press Enter to continue...")
 
@@ -253,7 +253,7 @@ class ClosestDotSearch(ActionNode):
 
         if action_executed in legal:
             args.action_executed.SetAction(action_executed)
-            self.SetStatus(NodeStatus.Failure)
+            self.SetStatus(NodeStatus.Success)
             self.SetColor(NodeColor.Green)
         else:
             #handle illegal move

@@ -15,7 +15,8 @@ class FallbackNode(ControlNode):
 
 
     def Execute(self,args):
-        time.sleep(1)
+        print("Executing Fallback")
+
         if (self.isRoot):
             message = self.GetString("")
 

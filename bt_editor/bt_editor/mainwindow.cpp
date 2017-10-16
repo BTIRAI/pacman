@@ -14,10 +14,10 @@
 #include "XmlParsers.hpp"
 #include "ControlNodeModel.hpp"
 #include "RootNodeModel.hpp"
-#include "ActionNodeModel.hpp"
-#include "ConditionNodeModel.hpp"
 #include "DecoratorNodeModel.hpp"
 #include "SubtreeNodeModel.hpp"
+#include "ActionNodeModelPacman.hpp"
+#include "ConditionNodeModelPacman.hpp"
 
 #include "utils.h"
 
@@ -57,7 +57,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ret->registerModel<GreedyNodeModel>("Action");
     ret->registerModel<EscapeNodeModel>("Action");
-    ret->registerModel<IsGhostCloseConditionNodeModel>("Condition");
+    ret->registerModel<ChaseNodeModel>("Action");
+    ret->registerModel<MoveToClosestDotNodeModel>("Action");
+    ret->registerModel<KeepDistanceNodeModel>("Action");
+
+    ret->registerModel<IsCloseConditionNodeModel>("Condition");
+    ret->registerModel<IsVeryCloseConditionNodeModel>("Condition");
+    ret->registerModel<IsScaredConditionNodeModel>("Condition");
+
+
+
     ret->registerModel<DecoratorNodeModel>("Decorator");
 
     _main_scene = new FlowScene( ret );

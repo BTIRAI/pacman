@@ -234,7 +234,7 @@ class PacmanGraphics:
         refresh()
 
     def update(self, newState):
-        return # UNCOMMENT TO DISPLAY
+        #return # MICHELE COMMENT TO DISPLAY
         agentIndex = newState._agentMoved
         agentState = newState.agentStates[agentIndex]
 

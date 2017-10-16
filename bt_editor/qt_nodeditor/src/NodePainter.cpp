@@ -80,7 +80,7 @@ drawNodeRect(QPainter* painter,
             : nodeStyle.NormalBoundaryColor;
 
 
-  //  if(getMode() == 1)
+    if(getMode() == 1)
     {
         std::cout << status << "!!! \n";
 

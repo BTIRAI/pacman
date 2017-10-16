@@ -363,8 +363,8 @@ class PacmanRules:
 
 
         if action not in legal:
-            # raise Exception("Illegal action " + str(action))
-            action = Directions.STOP ## MICHELE
+            raise Exception("Illegal action " + str(action))
+            ##action = Directions.STOP ## MICHELE
 
         pacmanState = state.data.agentStates[0]
 
@@ -809,11 +809,12 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         else:
             if savedDisplay is None:
                 savedDisplay = game.run()
+                savedDisplay = game.run()
             else:
                 savedDisplay = game.run(savedDisplay)
 
-            # if game.gameQuit:
-            #     return (games, display)
+            if game.gameQuit:
+                return (games, display)
             
             # Show win / loss message
             if hasattr(display, 'showTrainingScreen'):
