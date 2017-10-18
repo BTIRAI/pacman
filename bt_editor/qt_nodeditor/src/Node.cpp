@@ -45,14 +45,14 @@ Node::
 }
 
 
-Node::get_status()
+int Node::get_status()
 {
     std::lock_guard<std::mutex> lock(status_mutex_);
 
     return status_;
 }
 
-Node::set_status(int status)
+void Node::set_status(int status)
 {
     std::lock_guard<std::mutex> lock(status_mutex_);
 

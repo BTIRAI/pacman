@@ -54,8 +54,8 @@ public:
   restore(QJsonObject const &json) override;
 
 public:
-    get_status();
-    set_status(int status);
+    int get_status();
+    void set_status(int status);
 
   QUuid
   id() const;

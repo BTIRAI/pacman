@@ -86,14 +86,14 @@ recalculateSize() const
   _entryHeight = _fontMetrics.height();
 
   {
-    unsigned int maxNumOfEntries = std::max(_nSinks, _nSources);
+    unsigned int maxNumOfEntries = (std::max)(_nSinks, _nSources);
     unsigned int step = _entryHeight + _spacing;
     _height = step * maxNumOfEntries;
   }
 
   if (auto w = _dataModel->embeddedWidget())
   {
-    _height = std::max(_height, static_cast<unsigned>(w->height()));
+    _height = (std::max)(_height, static_cast<unsigned>(w->height()));
   }
 
   _height += captionHeight();
@@ -110,11 +110,11 @@ recalculateSize() const
     _width += w->width();
   }
 
-  _width = std::max(_width, captionWidth());
+  _width = (std::max)(_width, captionWidth());
 
   if (_dataModel->validationState() != NodeValidationState::Valid)
   {
-    _width   = std::max(_width, validationWidth());
+    _width   = (std::max)(_width, validationWidth());
     _height += validationHeight() + _spacing;
   }
 }
@@ -341,7 +341,7 @@ portWidth(PortType portType) const
       name = _dataModel->dataType(portType, i).name;
     }
 
-    width = std::max(unsigned(_fontMetrics.width(name)),
+    width = (std::max)(unsigned(_fontMetrics.width(name)),
                      width);
   }
 

@@ -10,8 +10,10 @@
 
 #include <iostream>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-
+#define NOMINMAX
 #include <windows.h>
+#undef min
+#undef max
 #else
 #include  <dirent.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
 #endif

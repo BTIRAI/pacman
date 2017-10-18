@@ -5,9 +5,8 @@ add_definitions(-std=c++11  -pthread)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 
-set(Python_ADDITIONAL_VERSIONS 3.6)
+#set(Python_ADDITIONAL_VERSIONS 3.6)
 
-find_package(PythonLibs)
 
 
 if(APPLE AND EXISTS /usr/local/opt/qt5)
@@ -37,7 +36,7 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 INCLUDE_DIRECTORIES( ${catkin_INCLUDE_DIRS} ./qt_nodeditor/include )
 
 
-
+INCLUDE_DIRECTORIES( C:/Users/mcolledanchise/AppData/Local/Programs/Python/Python36-32/include )
 
 
 

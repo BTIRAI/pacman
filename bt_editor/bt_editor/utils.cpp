@@ -9,13 +9,12 @@
 #include "RootNodeModel.hpp"
 #include "mutex"
 #include <string>
-
-
+//C:\Users\mcolledanchise\AppData\Local\Programs\Python\Python36-32\include
 //#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
-//#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
-//#else
-//#include  <Python.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
+////#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
+////#else
+////#include  <Python.h>
 //#endif
 
 
@@ -167,7 +166,8 @@ void NodeReorderRecursive(QtNodes::FlowScene &scene,
 
     //---------------------------------------------
     // adjust cursor Y
-    cursor.setX( std::max( this_max_Y, next_max_Y) ) ;
+
+    cursor.setX( ((std::max))( this_max_Y, next_max_Y) ) ;
 
 
     //    qDebug() << "node: " << node.nodeDataModel()->caption()<< " id: "<<
@@ -261,7 +261,7 @@ void SubtreeReorderRecursive(QtNodes::FlowScene &scene,
 
     //---------------------------------------------
     // adjust cursor Y
-    cursor.setX( std::max( this_max_Y, next_max_Y) ) ;
+    cursor.setX( (std::max)( this_max_Y, next_max_Y) ) ;
 
 
     //    qDebug() << "node: " << node.nodeDataModel()->caption()<< " id: "<<
@@ -432,8 +432,8 @@ void NodeReorder(QtNodes::FlowScene &scene)
         QPointF pos = scene.getNodePosition(*node) ;
         QSizeF rect =  scene.getNodeSize(*node);
 
-        right  = std::max( right,  pos.x() + rect.width() );
-        bottom = std::max( bottom, pos.y() + rect.height() );
+        right  = (std::max)( right,  pos.x() + rect.width() );
+        bottom = (std::max)( bottom, pos.y() + rect.height() );
     }
 
     scene.setSceneRect(-30, -30, right + 60, bottom + 60);
@@ -472,8 +472,8 @@ void SubtreeReorder(QtNodes::FlowScene &scene, QtNodes::Node &root_node)
         QPointF pos = scene.getNodePosition(*node) ;
         QSizeF rect =  scene.getNodeSize(*node);
 
-        right  = std::max( right,  pos.x() + rect.width() );
-        bottom = std::max( bottom, pos.y() + rect.height() );
+        right  = (std::max)( right,  pos.x() + rect.width() );
+        bottom = (std::max)( bottom, pos.y() + rect.height() );
     }
 
     scene.setSceneRect(-30, -30, right + 60, bottom + 60);
@@ -525,19 +525,17 @@ void runTree(QtNodes::FlowScene* scene)
 {
     qDebug() << "runTree\n";
 
-    std::cout << "Initializing" << std::endl;
+//    std::cout << "Initializing" << std::endl;
 
 //    Py_Initialize();
+//    PyRun_SimpleString("from time import time,ctime\n"
+//                       "print 'Today is',ctime(time())\n");
+//    Py_Finalize();
 
-    std::cout << "Init done" << std::endl;
-
-
-//    PyRun_SimpleString("import sys");
-
-//    std::cout << "Running pacman" << std::endl;
-
-//     PyRun_SimpleString("pacman.py -p BTAgent");
-//     std::cout << "DONE" << std::endl;
+   // system("python pacman.py -t -p BTAgent"); //in a new thread!
+    std::thread t1(system, "python pacman.py -t -p BTAgent");
+    t1.detach();
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
     QtNodes::Node* root;
     std::vector<QtNodes::Node*> roots = findRoots(*scene);
@@ -620,7 +618,7 @@ void runTree(QtNodes::FlowScene* scene)
 
     // Receive until the peer closes the connection
    // do {
-        while(true){
+        while(getMode() == 1){
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
         {
