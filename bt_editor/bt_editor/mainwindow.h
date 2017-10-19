@@ -27,6 +27,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void createPacmanXml();
 private slots:
 
     void on_actionLoad_triggered();

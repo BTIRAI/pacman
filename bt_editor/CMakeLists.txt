@@ -63,3 +63,8 @@ QT5_WRAP_UI(FORMS_HEADERS
 add_executable(behavior_tree_editor ${APP_CPPS} ${FORMS_HEADERS} )
 target_link_libraries(behavior_tree_editor qt_node_editor
     ${catkin_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lws2_32)
+
+add_custom_command(TARGET behavior_tree_editor PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/pacman_game $<TARGET_FILE_DIR:behavior_tree_editor>)
+

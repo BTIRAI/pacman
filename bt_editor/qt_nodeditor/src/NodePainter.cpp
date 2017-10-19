@@ -82,9 +82,6 @@ drawNodeRect(QPainter* painter,
 
     if(getMode() == 1)
     {
-        std::cout << status << "!!! \n";
-
-
         switch (status) {
         case BT::RUNNING:
             color = Qt::gray;

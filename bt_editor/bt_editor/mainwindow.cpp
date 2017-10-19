@@ -213,9 +213,7 @@ void MainWindow::on_actionSave_triggered()
 
     int i = 0;
 
-    qDebug() << "saving "<< i++ << "\n";
     std::vector<QtNodes::Node*> roots = findRoots( *_main_scene );
-    qDebug() << "saving "<< i++ << "\n";
 
     if( roots.empty())
     {
@@ -224,7 +222,6 @@ void MainWindow::on_actionSave_triggered()
                                        QMessageBox::Ok);
         return;
     }
-    qDebug() << "saving "<< i++ << "\n";
 
 
     std::vector<QtNodes::Node*> loose_nodes = findRoots( *_main_scene );
@@ -243,7 +240,6 @@ void MainWindow::on_actionSave_triggered()
             break;
         }
     }
-    qDebug() << "saving "<< i++ << "\n";
 
     if( has_root && getChildren(*_main_scene, *root).empty())
     {
@@ -253,7 +249,6 @@ void MainWindow::on_actionSave_triggered()
         return;
     }
 
-    qDebug() << "saving "<< i++ << "\n";
 
     //----------------------------
     QDomDocument doc;
@@ -300,7 +295,6 @@ void MainWindow::on_actionSave_triggered()
     saveDialog.setNameFilter("XML FILE (*.xml)");
     saveDialog.setDirectory(directory_path);
     saveDialog.exec();
-    qDebug() << "saving "<< i++ << "\n";
 
     QString fileName;
     if(saveDialog.result() == QDialog::Accepted && saveDialog.selectedFiles().size() == 1)
@@ -317,11 +311,70 @@ void MainWindow::on_actionSave_triggered()
         QTextStream stream(&file);
         stream << doc.toString(4) << endl;
     }
-    qDebug() << "saving "<< i++ << "\n";
 
     directory_path = QFileInfo(fileName).absolutePath();
     settings.setValue("MainWindow.lastSaveDirectory", directory_path);
 }
+
+
+void MainWindow::createPacmanXml()
+{
+
+    int i = 0;
+    std::vector<QtNodes::Node*> roots = findRoots( *_main_scene );
+
+
+    std::vector<QtNodes::Node*> loose_nodes = findRoots( *_main_scene );
+
+    QtNodes::Node* root;
+
+    bool has_root = false;
+
+    for (QtNodes::Node* node : roots )
+    {
+        if(node->nodeDataModel()->name() == "Root")
+        {
+            loose_nodes.erase(std::remove(loose_nodes.begin(), loose_nodes.end(), node), loose_nodes.end());
+            root = node;
+            has_root = true;
+            break;
+        }
+    }
+
+    //----------------------------
+    QDomDocument doc;
+    QDomElement root_element = doc.createElement( "root" );
+    doc.appendChild( root_element );
+
+    if(has_root)
+    {
+        QDomElement bt_node = doc.createElement( "BehaviorTree" );
+        root_element.appendChild(bt_node);
+
+        auto root_children = getChildren(*_main_scene, *root );
+        if(!root_children.empty())
+        {
+            recursivelyCreateXml(doc, bt_node, root_children.front() );
+        }
+    }
+
+    if(!loose_nodes.empty())
+    {
+        QDomElement loose_nodes_xml = doc.createElement( "LooseNodes" );
+        root_element.appendChild(loose_nodes_xml);
+        for(QtNodes::Node* loose_node : loose_nodes)
+        {
+            recursivelyCreateXml(doc, loose_nodes_xml, loose_node );
+        }
+    }
+
+    QFile file("pacmantree.xml");
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&file);
+        stream << doc.toString(4) << endl;
+    }
+}
+
 
 void MainWindow::on_actionZoom_In_triggered()
 {
@@ -647,6 +700,7 @@ void MainWindow::on_playButton_released()
             QtNodes::Node* node = it.second.get();
             node->nodeGraphicsObject().update();
         }
+        //createPacmanXml();
         std::thread t(&runTree, _main_scene);
         t.detach();
 

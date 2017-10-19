@@ -9,13 +9,6 @@
 #include "RootNodeModel.hpp"
 #include "mutex"
 #include <string>
-//C:\Users\mcolledanchise\AppData\Local\Programs\Python\Python36-32\include
-//#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-
-////#include <C:\Qt\Tools\mingw530_32\opt\include\python2.7\Python.h>
-////#else
-////#include  <Python.h>
-//#endif
 
 
 #define WIN32_LEAN_AND_MEAN
@@ -502,9 +495,6 @@ int getMode()
 
 void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string* return_string)
 {
-    std::cout << "Coloring: " << node->nodeDataModel()->name().toStdString() << std::endl;
-
-   std::cout << "string: " << *return_string << std::endl;
     std::string  node_color = return_string->substr(0,1);
     return_string->erase(return_string->begin());
     node->set_status(std::stoi(node_color));
@@ -516,23 +506,12 @@ void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string*
     {
         updateBTColors(scene, child, return_string);
     }
-
-    std::cout << "Coloring DONE for: " << node->nodeDataModel()->name().toStdString() << std::endl;
-
 }
 
 void runTree(QtNodes::FlowScene* scene)
 {
-    qDebug() << "runTree\n";
+    //qDebug() << "runTree\n";
 
-//    std::cout << "Initializing" << std::endl;
-
-//    Py_Initialize();
-//    PyRun_SimpleString("from time import time,ctime\n"
-//                       "print 'Today is',ctime(time())\n");
-//    Py_Finalize();
-
-   // system("python pacman.py -t -p BTAgent"); //in a new thread!
     std::thread t1(system, "python pacman.py -t -p BTAgent");
     t1.detach();
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
@@ -605,7 +584,6 @@ void runTree(QtNodes::FlowScene* scene)
         return;
     }
 
-     std::cout << "Bytes Sent: " <<  iResult << std::endl;
 
     // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
@@ -622,9 +600,9 @@ void runTree(QtNodes::FlowScene* scene)
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
         {
-            printf("Bytes received: %d\n", iResult);
+            //printf("Bytes received: %d\n", iResult);
 
-            std::cout << "Data received: " << recvbuf << std::endl;
+            //std::cout << "Data received: " << recvbuf << std::endl;
             std::string parsed_message = recvbuf;
             std::string token = parsed_message.substr(0, parsed_message.find(delimiter));
             updateBTColors(scene,root,&token);

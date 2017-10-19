@@ -1,5 +1,0 @@
-.*.sw?
-*.pyc
-*.egg-info
-build
-dist
