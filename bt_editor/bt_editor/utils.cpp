@@ -544,8 +544,10 @@ void runTree(QtNodes::FlowScene* scene)
     std::cout << roots.size() <<" Root found!: " << root->nodeDataModel()->name().toStdString() << std::endl;
 
     int iResult;
+#ifdef _WIN32
 
     SOCKET ConnectSocket = INVALID_SOCKET;
+    int ConnectSocket = 0;
     struct sockaddr_in clientService;
 
     char *sendbuf = "ping";
@@ -554,26 +556,22 @@ void runTree(QtNodes::FlowScene* scene)
     std::string delimiter = "|END";
 
 
-    #ifdef _WIN32
-        WSADATA wsaData;
-        //----------------------
-        // Initialize Winsock
-        iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-        if (iResult != NO_ERROR) {
-            std::cout << "WSAStartup failed: " << iResult << std::endl;
-            return;
-        }
-    #endif
+    WSADATA wsaData;
+    //----------------------
+    // Initialize Winsock
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != NO_ERROR) {
+        std::cout << "WSAStartup failed: " << iResult << std::endl;
+        return;
+    }
     std::cout << "Creating Socket" << std::endl;
 
     //----------------------
     // Create a SOCKET for connecting to server
     ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (ConnectSocket == INVALID_SOCKET) {
+    if (ConnectSocket == 0) {
         std::cout << "Error at socket(): " << WSAGetLastError() << std::endl;
-        #ifdef _WIN32
-            WSACleanup();
-        #endif
+        WSACleanup();
         return;
     }
 
@@ -588,23 +586,21 @@ void runTree(QtNodes::FlowScene* scene)
     //----------------------
     // Connect to server.
     iResult = connect( ConnectSocket, (SOCKADDR*) &clientService, sizeof(clientService) );
-    if ( iResult == SOCKET_ERROR) {
+    if ( iResult == -1 ) {
+        // if ( iResult == SOCKET_ERROR) {
         closesocket (ConnectSocket);
         std::cout << "Unable to connect to server: " <<  WSAGetLastError() << std::endl;
-#ifdef _WIN32
-    WSACleanup();
-#endif
-    return;
+
+        WSACleanup();
+        return;
     }
 
     // Send an initial buffer
     iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
     if (iResult == SOCKET_ERROR) {
-         std::cout << "send failed: " <<  WSAGetLastError() << std::endl;
+        std::cout << "send failed: " <<  WSAGetLastError() << std::endl;
         closesocket(ConnectSocket);
-#ifdef _WIN32
-    WSACleanup();
-#endif
+        WSACleanup();
         return;
     }
 
@@ -614,15 +610,13 @@ void runTree(QtNodes::FlowScene* scene)
     if (iResult == SOCKET_ERROR) {
         printf("shutdown failed: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
-#ifdef _WIN32
-    WSACleanup();
-#endif
-    return;
+        WSACleanup();
+        return;
     }
 
     // Receive until the peer closes the connection
-   // do {
-        while(getMode() == 1){
+    // do {
+    while(getMode() == 1){
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
         {
@@ -634,18 +628,137 @@ void runTree(QtNodes::FlowScene* scene)
             updateBTColors(scene,root,&token);
 
         }
-       // else if ( iResult == 0 )
-          //  printf("Connection closed\n");
-        //else
-           // printf("recv failed: %d\n", WSAGetLastError());
 
-    }// while( iResult > 0 );
+    }
 
     // cleanup
     closesocket(ConnectSocket);
-#ifdef _WIN32
     WSACleanup();
+
+#else
+    //Is a UNIX System
+
+    /* -------------- INITIALIZING VARIABLES -------------- */
+    int server, client; // socket file descriptors
+    int portNum = 8935; // port number
+    int bufSize = 1024; // buffer size
+    char buffer[bufSize]; // buffer to transmit
+    bool isExit = false; // var fo continue infinitly
+    std::string delimiter = "|END";
+
+    /* Structure describing an Internet socket address. */
+    struct sockaddr_in server_addr;
+    socklen_t size;
+
+
+    /* ---------- ESTABLISHING SOCKET CONNECTION ----------*/
+
+    server = socket(AF_INET, SOCK_STREAM, 0);
+
+
+    if (server < 0) {
+        cout << "Error establishing socket ..." << endl;
+        exit(-1);
+    }
+
+    cout << "- Socket server has been created..." << endl;
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = htons(INADDR_ANY);
+    server_addr.sin_port = htons(portNum);
+
+
+    int yes = 1;
+    if (setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
+    {
+        perror("setsockopt");
+        exit(1);
+    }
+
+
+    /* ---------------- BINDING THE SOCKET --------------- */
+
+    if ((bind(server, (struct sockaddr*) &server_addr, sizeof(server_addr)))
+            < 0) {
+        cout
+                << "- Error binding connection, the socket has already been established..."
+                << endl;
+        exit(-1);
+    }
+
+
+    /* ------------------ LISTENING CALL ----------------- */
+
+    size = sizeof(server_addr);
+    cout << "- Looking for clients..." << endl;
+
+    listen(server, 1);
+
+
+    /* ------------------- ACCEPT CALL ------------------ */
+
+    client = accept(server, (struct sockaddr *) &server_addr, &size);
+
+
+    if (client < 0)
+        cout << "- Error on accepting..." << endl;
+
+    string echo;
+    while (client > 0) {
+        // Welcome message to client
+        strcpy(buffer, "\n-> Welcome to echo server...\n");
+        send(client, buffer, bufSize, 0);
+        cout << "- Connected with the client, waiting for data..." << endl;
+        // loop to recive messages from client
+        do {
+            cout << "\nClient: ";
+            echo = "";
+
+
+
+            while(getMode() == 1) {
+                // wait the request from client
+                recv(client, buffer, bufSize, 0);
+                std::string parsed_message = buffer;
+                std::string token = parsed_message.substr(0, parsed_message.find(delimiter));
+                updateBTColors(scene,root,&token);
+                    cout << buffer << " ";
+                    // verify if client does not close the connection
+                    if (*buffer == '#') {
+                        // exit loop and say goodbye (It's a polite server :D)
+                        isExit = true;
+                        *buffer = '*';
+                        echo = "Goodbye!";
+                    } else if ((*buffer != '#') && (*buffer != '*')) {
+                        // concatenate the echo string to response to the client
+                        echo += buffer;
+                        echo += " ";
+                    }
+                } while (*buffer != '*');
+                // copy the echo string to the buffer
+                sprintf(buffer, "%s", echo.c_str());
+                // send the message to the client
+                send(client, buffer, bufSize, 0);
+            }
+
+            /* ---------------- CLOSE CALL ------------- */
+            cout << "\n\n=> Connection terminated with IP "
+                 << inet_ntoa(server_addr.sin_addr);
+            close(client);
+            cout << "\nGoodbye..." << endl;
+            exit(1);
+
+        }
+
+        /* ---------------- CLOSE CALL ------------- */
+        close(server);
+        return 0;
+
 #endif
+
+
+
+
 }
 
 
