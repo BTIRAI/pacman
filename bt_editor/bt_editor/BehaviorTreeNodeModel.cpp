@@ -14,52 +14,11 @@
 #include <windows.h>
 #undef min
 #undef max
-#else
-#include  <dirent.h> //dirent would also work for windows to find file in a directory but <windows.h> has a better font
 #endif
 
 
 #include <fstream>
 
-QStringList get_all_files_names_within_folder(std::string folder, std::string type)
-{
-
-    QStringList names;
-    std::string search_path = folder + "/"+type+"*.lua";
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-    //OS is windows
-    WIN32_FIND_DATA fd;
-    HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
-    if(hFind != INVALID_HANDLE_VALUE) {
-        do {
-            // read all (real) files in current folder
-            // , delete '!' read other 2 default folder . and ..
-            if(! (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ) {
-                names.push_back(QString(fd.cFileName));
-            }
-        }while(::FindNextFile(hFind, &fd));
-        ::FindClose(hFind);
-    }
-
-#else
-    //OS is unix
-
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (search_path)) != NULL) {
-        /* print all the files and directories within directory */
-        while ((ent = readdir (dir)) != NULL) {
-            names.push_back(QString(ent->d_name));
-        }
-        closedir (dir);
-    } else {
-        /* could not open directory */
-        perror ("");
-    }
-#endif
-    return names;
-}
 
 
 
@@ -93,15 +52,7 @@ BehaviorTreeNodeModel::BehaviorTreeNodeModel(QString name,
         //top_layout->addWidget( _ID_selection_combobox );
 
         main_layout->addLayout(top_layout);
-        //main_layout->addWidget(_params_widget);
-        //main_layout->addWidget(_line_edit);
-        //main_layout->addWidget(_text_edit);
 
-        //QStringList combo_items = get_all_files_names_within_folder(".", name.toStdString());
-
-
-
-        //_ID_selection_combobox->addItems(combo_items);
     QFont font = _label->font();
     font.setPointSize(10);
     font.setBold(true);
