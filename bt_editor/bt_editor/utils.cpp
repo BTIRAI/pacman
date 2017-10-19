@@ -9,7 +9,7 @@
 #include "RootNodeModel.hpp"
 #include "mutex"
 #include <string>
-
+#include <thread>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
 #define WIN32_LEAN_AND_MEAN
@@ -19,10 +19,14 @@
 
 #else
 
+#include <stdio.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>  /* Needed for getaddrinfo() and freeaddrinfo() */
 #include <unistd.h> /* Needed for close() */
+
+#include <netinet/in.h>
 
 #endif
 #include <stdio.h>
@@ -559,7 +563,7 @@ void runTree(QtNodes::FlowScene* scene)
             std::cout << "WSAStartup failed: " << iResult << std::endl;
             return;
         }
-    #endif;
+    #endif
     std::cout << "Creating Socket" << std::endl;
 
     //----------------------
@@ -612,7 +616,8 @@ void runTree(QtNodes::FlowScene* scene)
         closesocket(ConnectSocket);
 #ifdef _WIN32
     WSACleanup();
-#endif        return;
+#endif
+    return;
     }
 
     // Receive until the peer closes the connection
