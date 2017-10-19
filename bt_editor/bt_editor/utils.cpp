@@ -15,6 +15,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <winsock2.h>
+#include <Ws2tcpip.h>
 
 #else
 
@@ -24,7 +25,6 @@
 #include <unistd.h> /* Needed for close() */
 
 #endif
-#include <Ws2tcpip.h>
 #include <stdio.h>
 #include <iostream>
 
