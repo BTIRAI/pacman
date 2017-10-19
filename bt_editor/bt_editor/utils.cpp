@@ -711,7 +711,7 @@ void runTree(QtNodes::FlowScene* scene)
         std::cout << "- Connected with the client, waiting for data..." << std::endl;
         // loop to recive messages from client
         while(getMode() == 1)  {
-            std::out << "\nClient: ";
+            std::cout << "\nClient: ";
             echo = "";
 
 
