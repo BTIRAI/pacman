@@ -657,11 +657,11 @@ void runTree(QtNodes::FlowScene* scene)
 
 
     if (server < 0) {
-        cout << "Error establishing socket ..." << endl;
+        std::cout << "Error establishing socket ..." << std::endl;
         exit(-1);
     }
 
-    cout << "- Socket server has been created..." << endl;
+    std::cout << "- Socket server has been created..." << std::endl;
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htons(INADDR_ANY);
@@ -680,9 +680,9 @@ void runTree(QtNodes::FlowScene* scene)
 
     if ((bind(server, (struct sockaddr*) &server_addr, sizeof(server_addr)))
             < 0) {
-        cout
+        std::cout
                 << "- Error binding connection, the socket has already been established..."
-                << endl;
+                << std::endl;
         exit(-1);
     }
 
@@ -690,7 +690,7 @@ void runTree(QtNodes::FlowScene* scene)
     /* ------------------ LISTENING CALL ----------------- */
 
     size = sizeof(server_addr);
-    cout << "- Looking for clients..." << endl;
+    std::cout << "- Looking for clients..." << std::endl;
 
     listen(server, 1);
 
@@ -701,52 +701,52 @@ void runTree(QtNodes::FlowScene* scene)
 
 
     if (client < 0)
-        cout << "- Error on accepting..." << endl;
+        std::cout << "- Error on accepting..." << std::endl;
 
-    string echo;
+    std::string echo;
     while (client > 0) {
         // Welcome message to client
         strcpy(buffer, "\n-> Welcome to echo server...\n");
         send(client, buffer, bufSize, 0);
-        cout << "- Connected with the client, waiting for data..." << endl;
+        std::cout << "- Connected with the client, waiting for data..." << std::endl;
         // loop to recive messages from client
-        do {
-            cout << "\nClient: ";
+        while(getMode() == 1)  {
+            std::out << "\nClient: ";
             echo = "";
 
 
 
-            while(getMode() == 1) {
+            do{
                 // wait the request from client
                 recv(client, buffer, bufSize, 0);
                 std::string parsed_message = buffer;
                 std::string token = parsed_message.substr(0, parsed_message.find(delimiter));
                 updateBTColors(scene,root,&token);
-                    cout << buffer << " ";
-                    // verify if client does not close the connection
-                    if (*buffer == '#') {
-                        // exit loop and say goodbye (It's a polite server :D)
-                        isExit = true;
-                        *buffer = '*';
-                        echo = "Goodbye!";
-                    } else if ((*buffer != '#') && (*buffer != '*')) {
-                        // concatenate the echo string to response to the client
-                        echo += buffer;
-                        echo += " ";
-                    }
-                } while (*buffer != '*');
-                // copy the echo string to the buffer
-                sprintf(buffer, "%s", echo.c_str());
-                // send the message to the client
-                send(client, buffer, bufSize, 0);
-            }
+                std::cout << buffer << " ";
+                // verify if client does not close the connection
+                if (*buffer == '#') {
+                    // exit loop and say goodbye (It's a polite server :D)
+                    isExit = true;
+                    *buffer = '*';
+                    echo = "Goodbye!";
+                } else if ((*buffer != '#') && (*buffer != '*')) {
+                    // concatenate the echo string to response to the client
+                    echo += buffer;
+                    echo += " ";
+                }
+            } while (*buffer != '*');
+            // copy the echo string to the buffer
+            sprintf(buffer, "%s", echo.c_str());
+            // send the message to the client
+            send(client, buffer, bufSize, 0);
+        }
 
-            /* ---------------- CLOSE CALL ------------- */
-            cout << "\n\n=> Connection terminated with IP "
-                 << inet_ntoa(server_addr.sin_addr);
-            close(client);
-            cout << "\nGoodbye..." << endl;
-            exit(1);
+        /* ---------------- CLOSE CALL ------------- */
+        std::cout << "\n\n=> Connection terminated with IP "
+                  << inet_ntoa(server_addr.sin_addr);
+        close(client);
+        std::cout << "\nGoodbye..." << std::endl;
+        exit(1);
 
         }
 
