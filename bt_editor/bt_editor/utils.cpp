@@ -525,8 +525,13 @@ void updateBTColors(QtNodes::FlowScene* scene, QtNodes::Node* node, std::string*
 void runTree(QtNodes::FlowScene* scene)
 {
     //qDebug() << "runTree\n";
+#ifdef _WIN32
 
     std::thread t1(system, "python pacman.py -t -p BTAgent");
+#else
+    std::thread t1(system, "python3 pacman.py -t -p BTAgent");
+#endif
+
     t1.detach();
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
