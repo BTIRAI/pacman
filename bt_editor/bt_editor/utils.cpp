@@ -752,8 +752,6 @@ void runTree(QtNodes::FlowScene* scene)
 
         /* ---------------- CLOSE CALL ------------- */
         close(server);
-        return 0;
-
 #endif
 
 
