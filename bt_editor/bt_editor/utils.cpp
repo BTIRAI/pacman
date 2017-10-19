@@ -694,10 +694,10 @@ void runTree(QtNodes::FlowScene* scene)
 
     /* ------------------ LISTENING CALL ----------------- */
 
-    size = sizeof(server_addr);
-    std::cout << "- Looking for clients..." << std::endl;
+//    size = sizeof(server_addr);
+//    std::cout << "- Looking for clients..." << std::endl;
 
-    listen(server, 1);
+//    listen(server, 1);
 
 
     /* ------------------- ACCEPT CALL ------------------ */
