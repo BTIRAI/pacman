@@ -10,10 +10,20 @@
 #include "mutex"
 #include <string>
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
 #define WIN32_LEAN_AND_MEAN
 
 #include <winsock2.h>
+
+#else
+
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>  /* Needed for getaddrinfo() and freeaddrinfo() */
+#include <unistd.h> /* Needed for close() */
+
+#endif
 #include <Ws2tcpip.h>
 #include <stdio.h>
 #include <iostream>
@@ -529,23 +539,27 @@ void runTree(QtNodes::FlowScene* scene)
 
     std::cout << roots.size() <<" Root found!: " << root->nodeDataModel()->name().toStdString() << std::endl;
 
-    WSADATA wsaData;
     int iResult;
 
     SOCKET ConnectSocket = INVALID_SOCKET;
     struct sockaddr_in clientService;
 
-    char *sendbuf = "this is a test";
+    char *sendbuf = "ping";
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     std::string delimiter = "|END";
-    //----------------------
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != NO_ERROR) {
-      std::cout << "WSAStartup failed: " << iResult << std::endl;
-      return;
-    }
+
+
+    #ifdef _WIN32
+        WSADATA wsaData;
+        //----------------------
+        // Initialize Winsock
+        iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+        if (iResult != NO_ERROR) {
+            std::cout << "WSAStartup failed: " << iResult << std::endl;
+            return;
+        }
+    #endif;
     std::cout << "Creating Socket" << std::endl;
 
     //----------------------
@@ -553,7 +567,9 @@ void runTree(QtNodes::FlowScene* scene)
     ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (ConnectSocket == INVALID_SOCKET) {
         std::cout << "Error at socket(): " << WSAGetLastError() << std::endl;
-        WSACleanup();
+        #ifdef _WIN32
+            WSACleanup();
+        #endif
         return;
     }
 
@@ -571,8 +587,10 @@ void runTree(QtNodes::FlowScene* scene)
     if ( iResult == SOCKET_ERROR) {
         closesocket (ConnectSocket);
         std::cout << "Unable to connect to server: " <<  WSAGetLastError() << std::endl;
-        WSACleanup();
-        return;
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return;
     }
 
     // Send an initial buffer
@@ -580,7 +598,9 @@ void runTree(QtNodes::FlowScene* scene)
     if (iResult == SOCKET_ERROR) {
          std::cout << "send failed: " <<  WSAGetLastError() << std::endl;
         closesocket(ConnectSocket);
-        WSACleanup();
+#ifdef _WIN32
+    WSACleanup();
+#endif
         return;
     }
 
@@ -590,8 +610,9 @@ void runTree(QtNodes::FlowScene* scene)
     if (iResult == SOCKET_ERROR) {
         printf("shutdown failed: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
-        WSACleanup();
-        return;
+#ifdef _WIN32
+    WSACleanup();
+#endif        return;
     }
 
     // Receive until the peer closes the connection
@@ -617,8 +638,9 @@ void runTree(QtNodes::FlowScene* scene)
 
     // cleanup
     closesocket(ConnectSocket);
+#ifdef _WIN32
     WSACleanup();
-
+#endif
 }
 
 
