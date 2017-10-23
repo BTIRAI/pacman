@@ -18,6 +18,8 @@ Instruction in Unix
 
 3) Build the Software:
 
+Run in a terminal the following commands:
+
 `cd pacmanBT` <br/>
 `mkdir build` <br/>
 `cd build` <br/>
@@ -27,18 +29,20 @@ Instruction in Unix
 
 4) Run the Software:
 
+Run in a terminal the following commands:
+
 `cd bt_editor`
 
 `./behavior_tree_editor`
 
 5)Run a sample tree:
 
-In the BT editor: File->Load  <br/>
-Browse in the folder pacmanBT (the one you retrieved in step 2)  <br/>
-select the file pacmantree.xml  <br/>
-A BT should appear in the editor <br/>
-Press the Play icon. <br/>
-Enjoy
+-In the BT editor: File->Load  <br/>
+-Browse in the folder pacmanBT (the one you retrieved in step 2)  <br/>
+-Select the file pacmantree.xml  <br/>
+-A BT should appear in the editor <br/>
+-Press the Play icon. <br/>
+-Enjoy
 
 
 
