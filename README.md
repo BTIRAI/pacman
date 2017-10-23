@@ -9,7 +9,7 @@ Installation in Unix
 ------------
 1) Install Dependencies:
 
-`sudo apt-get install build-essential libgl1-mesa-dev python3-tk sudo apt-get install qtdeclarative5-dev`
+`sudo apt-get install build-essential libgl1-mesa-dev python3-tk qtdeclarative5-dev`
 
 2) Download the repository:
 
