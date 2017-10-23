@@ -2,11 +2,10 @@ DEPENDENCIES
 ------------
 
 
-* [YARP](https://www.yarp.it/)
-* [LUA](https://www.lua.org/)
+TODO
 
 
-Instruction in Unix
+Installation in Unix
 ------------
 1) Install Dependencies:
 
@@ -26,8 +25,8 @@ Run in a terminal the following commands:
 `cmake ..` <br/>
 `make`
 
-
-4) Run the Software:
+Run in Unix
+------------
 
 Run in a terminal the following commands:
 
@@ -35,14 +34,33 @@ Run in a terminal the following commands:
 
 `./behavior_tree_editor`
 
-5)Run a sample tree:
 
+
+
+
+
+
+Verify your installation
+------------
 -In the BT editor: File->Load  <br/>
 -Browse in the folder pacmanBT (the one you retrieved in step 2)  <br/>
 -Select the file pacmantree.xml  <br/>
 -A BT should appear in the editor <br/>
 -Press the Play icon. <br/>
 -Enjoy
+
+
+Create your Behavior Tree
+------------
+
+Right Click in the editor to add a node. 
+Press Play to run the BT
+Enjoy
+
+NOTE: A BT must have the root node. It cannot have loose nodes (non-connected nodes).
+
+
+
 
 
 
