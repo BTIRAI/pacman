@@ -642,87 +642,55 @@ void runTree(QtNodes::FlowScene* scene)
 #else
     //Is a UNIX System
 
-    /* -------------- INITIALIZING VARIABLES -------------- */
-    int ConnectSocket, client; // socket file descriptors
-    int portNum = 8935; // port number
-    int bufSize = 1024; // buffer size
-    char buffer[bufSize]; // buffer to transmit
-    bool isExit = false; // var fo continue infinitly
-    std::string delimiter = "|END";
 
+
+
+    int ConnectSocket = 0;
+    //int ConnectSocket = 0;
+    struct sockaddr_in clientService;
 
     char *sendbuf = "ping";
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
-
-    /* Structure describing an Internet socket address. */
-    struct sockaddr_in clientService;
-    socklen_t size;
+    std::string delimiter = "|END";
 
 
-    /* ---------- ESTABLISHING SOCKET CONNECTION ----------*/
 
-    //ConnectSocket = socket(AF_INET, SOCK_STREAM, 0);
+    std::cout << "Creating Socket" << std::endl;
+
+    //----------------------
+    // Create a SOCKET for connecting to server
     ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (ConnectSocket == 0) {
+        return;
+    }
 
-
-    // if (clientService < 0) {
-    //     std::cout << "Error establishing socket ..." << std::endl;
-    //     exit(-1);
-    // }
-
-
+    //----------------------
+    // The sockaddr_in structure specifies the address family,
+    // IP address, and port of the server to be connected to.
     clientService.sin_family = AF_INET;
     clientService.sin_addr.s_addr = inet_addr( "127.0.0.1" );
     clientService.sin_port = htons( 8935 );
 
 
-    // int yes = 1;
-    // if (setsockopt(clientService, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
-    // {
-    //     perror("setsockopt");
-    //     exit(1);
-    // }
+    //----------------------
+    // Connect to server.
+    iResult = connect( ConnectSocket, (sockaddr*) &clientService, sizeof(clientService) );
+    if ( iResult == -1 ) {
+        // if ( iResult == SOCKET_ERROR) {
+        return;
+    }
 
-    std::cout << "connecting" << std::endl;
-    /* ---------------- BINDING THE SOCKET --------------- */
-    iResult = connect( ConnectSocket, (struct sockaddr*)  &clientService, sizeof(clientService) );
-    std::cout << "connected" << std::endl;
+    // Send an initial buffer
     iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
-    iResult = shutdown(ConnectSocket, 0);
 
 
-    // if ((bind(clientService, (struct sockaddr*) &clientService, sizeof(clientService)))
-    //         < 0) {
-    //     std::cout
-    //             << "- Error binding connection, the socket has already been established..."
-    //             << std::endl;
-    //     exit(-1);
-    // }
+    // shutdown the connection since no more data will be sent
+    iResult = shutdown(ConnectSocket, 0x01);
 
 
-   //  /* ------------------ LISTENING CALL ----------------- */
-
-   // size = sizeof(server_addr);
-   // std::cout << "- Looking for clients..." << std::endl;
-
-   // listen(server, 1);
-
-
-   //  /* ------------------- ACCEPT CALL ------------------ */
-
-   //  client = accept(server, (struct sockaddr *) &server_addr, &size);
-
-
-    // if (client < 0)
-    //     std::cout << "- Error on accepting..." << std::endl;
-    // while (client > 0) {
-    //     // Welcome message to client
-    //     strcpy(buffer, "\n-> Welcome to echo server...\n");
-    //     send(client, buffer, bufSize, 0);
-    //     std::cout << "- Connected with the client, waiting for data..." << std::endl;
-    //     // loop to recive messages from client
-
+    // Receive until the peer closes the connection
+    // do {
     while(getMode() == 1){
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
@@ -730,23 +698,14 @@ void runTree(QtNodes::FlowScene* scene)
             //printf("Bytes received: %d\n", iResult);
 
             //std::cout << "Data received: " << recvbuf << std::endl;
-            std::string parsed_message = buffer;
+            std::string parsed_message = recvbuf;
             std::string token = parsed_message.substr(0, parsed_message.find(delimiter));
             updateBTColors(scene,root,&token);
         }
 
     }
 
-        /* ---------------- CLOSE CALL ------------- */
-        // std::cout << "\n\n=> Connection terminated with IP "
-        //           << inet_ntoa(server_addr.sin_addr);
-        // close(client);
-        // std::cout << "\nGoodbye..." << std::endl;
-
-      //  }
-
-        /* ---------------- CLOSE CALL ------------- */
-        // close(ConnectSocket);
+    // cleanup
 #endif
 
 
