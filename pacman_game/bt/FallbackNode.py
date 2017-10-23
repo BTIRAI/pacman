@@ -44,7 +44,7 @@ class FallbackNode(ControlNode):
                 message = self.GetString('')
                 message = message + "|END"
                 self.conn.sendall(message.encode('utf-8'))
-            except ConnectionAbortedError:
+            except (ConnectionAbortedError, BrokenPipeError):
                 self.s.close()
                 print('The game has stopped')
                 sys.exit()
