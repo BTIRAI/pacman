@@ -12,35 +12,32 @@ Instruction in Unix
 
 `sudo apt-get install build-essential libgl1-mesa-dev python3-tk`
 
-2) Download the repository
+2) Download the repository:
 
 `git clone https://github.com/miccol/pacmanBT.git`
 
-3) Build the Software
+3) Build the Software:
 
-`cd pacmanBT`
-
-`mkdir build`
-
-`cd build`
-
-`cmake ..`
-
+`cd pacmanBT` <br/>
+`mkdir build` <br/>
+`cd build` <br/>
+`cmake ..` <br/>
 `make`
 
 
-4) Run the Software
+4) Run the Software:
 
 `cd bt_editor`
 
 `./behavior_tree_editor`
 
-5)Run a sample tree 
-In the BT editor: File->Load
-Browse in the folder pacmanBT (the one you retrieved in step 2)
-select the file pacmantree.xml
-A BT should appear in the editor
-Press the Play icon.
+5)Run a sample tree:
+
+In the BT editor: File->Load  <br/>
+Browse in the folder pacmanBT (the one you retrieved in step 2)  <br/>
+select the file pacmantree.xml  <br/>
+A BT should appear in the editor <br/>
+Press the Play icon. <br/>
 Enjoy
 
 
