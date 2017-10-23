@@ -706,6 +706,7 @@ void runTree(QtNodes::FlowScene* scene)
     }
 
     // cleanup
+    close(ConnectSocket);
 #endif
 
 
