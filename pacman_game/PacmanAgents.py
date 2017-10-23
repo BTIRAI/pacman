@@ -69,8 +69,8 @@ def getBTNode(root):
     elif (type == 'IsGhostClose'):
         print('Create IsGhostClose')
         node = IsGhostClose('IsGhostClose', 5)
-    elif (type == 'IsGhostVeryCloser'):
-        node = IsGhostClose('IsGhostVeryCloser', 2)
+    elif (type == 'IsGhostVeryClose'):
+        node = IsGhostClose('IsGhostVeryClose', 2)
     elif(type == 'IsClosestGhostScared'):
         node = IsClosestGhostScared('IsClosestGhostScared')
     else:

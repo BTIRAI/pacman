@@ -34,6 +34,7 @@ public:
         layout->addWidget( _label );
         layout->addWidget( _name_edit );
 
+        _name_edit->setHidden(true);
 
 
 
