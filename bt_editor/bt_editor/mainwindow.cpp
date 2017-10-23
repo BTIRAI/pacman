@@ -700,7 +700,7 @@ void MainWindow::on_playButton_released()
             QtNodes::Node* node = it.second.get();
             node->nodeGraphicsObject().update();
         }
-        //createPacmanXml();
+        createPacmanXml();
         std::thread t(&runTree, _main_scene);
         t.detach();
 
