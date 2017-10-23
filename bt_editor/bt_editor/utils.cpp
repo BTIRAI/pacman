@@ -552,7 +552,7 @@ void runTree(QtNodes::FlowScene* scene)
 #ifdef _WIN32
 
     SOCKET ConnectSocket = INVALID_SOCKET;
-    int ConnectSocket = 0;
+    //int ConnectSocket = 0;
     struct sockaddr_in clientService;
 
     char *sendbuf = "ping";
