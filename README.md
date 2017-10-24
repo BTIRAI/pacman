@@ -53,7 +53,7 @@ Verify your installation
 
 
 
--Press the Play icon. <br/>
+-Press the Play (<img src="https://github.com/miccol/pacmanBT/blob/master/bt_editor/qt_nodeditor/resources/play.png" width="15" height="15">) icon. <br/>
 -Enjoy
 
 
