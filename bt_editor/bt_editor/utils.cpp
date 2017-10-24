@@ -529,7 +529,7 @@ void runTree(QtNodes::FlowScene* scene)
 
     std::thread t1(system, "python pacman.py -t -p BTAgent");
 #else
-    std::thread t1(system, "python3 pacman.py -t -p BTAgent");
+    std::thread t1(system, "python3 pacman.py -p BTAgent");
 #endif
 
     t1.detach();
@@ -706,6 +706,7 @@ void runTree(QtNodes::FlowScene* scene)
     }
 
     // cleanup
+    close(ConnectSocket);
 #endif
 
 
