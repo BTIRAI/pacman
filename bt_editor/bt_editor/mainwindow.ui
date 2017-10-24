@@ -109,17 +109,9 @@
     </property>
     <addaction name="actionAuto_arrange"/>
    </widget>
-   <widget class="QMenu" name="menuLUA">
-    <property name="title">
-     <string>Lua Scripts</string>
-    </property>
-    <addaction name="actionAdd_Action"/>
-    <addaction name="actionAdd_Condition"/>
-   </widget>
    <addaction name="menuLoad"/>
    <addaction name="menuZoom"/>
    <addaction name="menuReorder"/>
-   <addaction name="menuLUA"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
