@@ -35,7 +35,7 @@ Run in a terminal the following commands:
 `./behavior_tree_editor`
 
 
-![alt tag](https://raw.githubusercontent.com/miccol/pacmanBT/ScreenWindows.jpg)
+![alt tag](https://github.com/miccol/pacmanBT/blob/master/ScreenWindows.jpg)
 
 
 
