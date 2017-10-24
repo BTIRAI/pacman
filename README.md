@@ -13,8 +13,8 @@ Installation in Windows
 1) Install Dependencies:
 
 Download and install [Cmake for Windows](https://cmake.org/download/) <br/>
-Download and install [QT5 for Windows](https://www.qt.io/download-qt-for-application-development) (the open source version is free)  
-Download and install [python3 for Windows](http://docs.python-guide.org/en/latest/starting/install3/win/)
+Download and install [QT5 for Windows](https://www.qt.io/download-qt-for-application-development) (the open source version is free)  <br/>
+Download and install [python3 for Windows](http://docs.python-guide.org/en/latest/starting/install3/win/)<br/>
 2) Download the repository:
 
 `git clone https://github.com/miccol/pacmanBT.git`
