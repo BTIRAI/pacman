@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 
 project(behavior_tree_editor)
 add_definitions(-std=c++11  -pthread)
