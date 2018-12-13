@@ -1,13 +1,3 @@
-DEPENDENCIES
-------------
-
-
-TODO
-
-
-
-
-
 Installation in Windows
 ------------
 1) Install Dependencies:
