@@ -7,7 +7,7 @@ Download and install [QT5 for Windows](https://www.qt.io/download-qt-for-applica
 Download and install [python3 for Windows](http://docs.python-guide.org/en/latest/starting/install3/win/)<br/>
 2) Download the repository:
 
-`git clone https://github.com/miccol/pacmanBT.git`
+`git clone https://github.com/btirai/pacmanBT.git`
 
 3) Build the Software:
 
