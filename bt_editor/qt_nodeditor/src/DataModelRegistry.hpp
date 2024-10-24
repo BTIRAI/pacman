@@ -8,7 +8,6 @@
 
 #include "NodeDataModel.hpp"
 #include "Export.hpp"
-#include "QStringStdHash.hpp"
 
 namespace QtNodes
 {
